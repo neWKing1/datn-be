@@ -20,6 +20,7 @@ class AuthController extends Controller
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
             return response()->json([
+                'status' =>  401,
                 'message' => 'Email or password is incorrect!'
             ], 401);
         }
@@ -28,4 +29,28 @@ class AuthController extends Controller
             'token' => $user->createToken('auth_token')->plainTextToken
         ], 200);
     }
+
+    public function register(RegisterRequest $request)
+    {
+        $data = $request->validated();
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
+
+        if ($user) {
+            return response()->json([
+                'status' => 201,
+                'token' => $user->createToken('auth_token')->plainTextToken
+            ], 201);
+        } else {
+            return response()->json([
+                'status' => 500,
+                'message' => "Something Went Wrong!"
+            ], 500);
+        }
+    }
+
 }
