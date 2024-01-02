@@ -27,4 +27,20 @@ class LoginRequest extends FormRequest
             'password' => 'required|string',
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'Trường email là bắt buộc.',
+            'email.email' => 'Email không đúng định dạng.',
+            'email.exists' => 'Email không tồn tại.',
+            'password.required' => 'Trường mật khẩu là bắt buộc.',
+            'password.string' => 'Mật khẩu phải là một chuỗi.',
+        ];
+    }
 }
