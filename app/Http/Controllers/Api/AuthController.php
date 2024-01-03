@@ -21,7 +21,7 @@ class AuthController extends Controller
         if (!$user || !Hash::check($data['password'], $user->password)) {
             return response()->json([
                 'status' =>  401,
-                'message' => 'Email or password is incorrect!'
+                'message' => 'Email hoặc mật khẩu không chính xác!'
             ], 401);
         }
         return response()->json([
@@ -48,7 +48,7 @@ class AuthController extends Controller
         } else {
             return response()->json([
                 'status' => 500,
-                'message' => "Something Went Wrong!"
+                'message' => "Đã xảy ra lỗi!"
             ], 500);
         }
     }
@@ -58,7 +58,7 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
         return response()->json([
             'status' => 200,
-            'message' => 'Logged out successfully!'
+            'message' => 'Đăng xuất thành công!'
         ]);
     }
 
