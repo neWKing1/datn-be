@@ -17,16 +17,15 @@ class DatabaseSeeder extends Seeder
         $users = \App\Models\User::factory($recordsCount)->create();
         $colors = \App\Models\Color::factory($recordsCount)->create();
         $sizes = \App\Models\Size::factory($recordsCount)->create();
-        $materials = \App\Models\Meterial::factory($recordsCount)->create();
         $products = \App\Models\Product::factory($recordsCount)->create();
 
-        $variants = \App\Models\Variant::factory($recordsCount)->make()->each(function ($variant) use ($colors, $sizes, $materials, $products) {
+        $variants = \App\Models\Variant::factory($recordsCount)->make()->each(function ($variant) use ($colors, $sizes, $products) {
             $faker = \Faker\Factory::create();
             $variant->quantity = $faker->randomDigitNotNull();
             $variant->price = $faker->randomDigitNotNull();
+            $variant->weight = $faker->randomDigitNotNull();
             $variant->color_id = $colors->random()->id;
             $variant->size_id = $sizes->random()->id;
-            $variant->meterial_id = $materials->random()->id;
             $variant->product_id = $products->random()->id;
             $variant->save();
         });

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -14,19 +15,12 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
-        $products = ProductResource::collection(Product::all());
+        $products = ProductResource::collection(Product::where('status', 0)->orderBy('id', 'desc')->get());
 
         if ($products->count() > 0) {
-            return response()->json([
-                'status' => 200,
-                'products' => $products
-            ], 200);
+            return response()->json($products, 200);
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Không tìm thấy bản ghi'
-            ], 404);
+            return response()->json([], 200);
         }
     }
 
@@ -43,7 +37,26 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $product = Product::where('name', $request->name)->count();
+
+            if ($product >= 1) {
+                return response()->json('Sản phẩm đã tồn tại', 409);
+            } else {
+                $name = $request->name;
+                $slug = Str::slug($name);
+
+                Product::create([
+                    'name' => $name,
+                    'slug' => $slug
+                ]);
+                return response()->json("Tạo sản phẩm thành công", 201);
+            }
+        } catch (\Exception $e) {
+            return response()->json(["Tạo sản phẩm thất bại: " . $e->getMessage()
+            ], 500);
+        }
+
     }
 
     /**

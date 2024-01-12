@@ -11,8 +11,8 @@ class Product extends Model
     protected $fillable = [
         'name',
         'slug',
-        'quantity',
         'status',
+        'is_active'
     ];
 
     /**
@@ -28,12 +28,5 @@ class Product extends Model
     public function sizes(): BelongsToMany
     {
         return $this->belongsToMany(Size::class);
-    }
-    /**
-     * @return BelongsToMany
-     */
-    public function meterials(): BelongsToMany
-    {
-        return $this->belongsToMany(Meterial::class);
     }
 }
