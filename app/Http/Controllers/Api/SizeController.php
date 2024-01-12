@@ -14,19 +14,12 @@ class SizeController extends Controller
      */
     public function index()
     {
-        //
-        $sizes = SizeResource::collection(Size::all());
+        $sizes = SizeResource::collection(Size::orderBy('id', 'desc')->get());
 
         if ($sizes->count() > 0) {
-            return response()->json([
-                'status' => 200,
-                'sizes' => $sizes
-            ], 200);
+            return response()->json($sizes, 200);
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Không tìm thấy bản ghi'
-            ], 404);
+            return response()->json([], 200);
         }
     }
 
@@ -43,7 +36,21 @@ class SizeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $size = Size::where('name', $request->name)->count();
+
+            if ($size >= 1) {
+                return response()->json('Size đã tồn tại', 409);
+            } else {
+                Size::create([
+                    'name' => $request->name
+                ]);
+                return response()->json("Tạo size thành công", 201);
+            }
+        } catch (\Exception $e) {
+            return response()->json(["Tạo size thất bại: " . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -54,10 +61,7 @@ class SizeController extends Controller
         //
         $size = Size::find($id);
         if ($size) {
-            return response()->json([
-                'status' => 200,
-                'size' => $size
-            ], 200);
+            return response()->json($size, 200);
         } else {
             return response()->json([
                 'status' => 404,

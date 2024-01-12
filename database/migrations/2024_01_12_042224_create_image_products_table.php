@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('meterials', function (Blueprint $table) {
+        Schema::create('image_products', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->bigInteger('variant_id')->unsigned();
+            $table->bigInteger('image_gallery_id')->unsigned();
+            $table->foreign('variant_id')->references('id')->on('variants');
+            $table->foreign('image_gallery_id')->references('id')->on('image_galleries');
             $table->timestamps();
         });
     }
@@ -23,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('meterials');
+        Schema::dropIfExists('image_products');
     }
 };

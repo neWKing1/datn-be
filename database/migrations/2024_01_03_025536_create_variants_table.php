@@ -14,14 +14,13 @@ return new class extends Migration
         Schema::create('variants', function (Blueprint $table) {
             $table->id();
             $table->integer('quantity');
+            $table->float('weight');
             $table->bigInteger('price');
             $table->bigInteger('size_id')->unsigned();
             $table->bigInteger('color_id')->unsigned();
-            $table->bigInteger('meterial_id')->unsigned();
             $table->bigInteger('product_id')->unsigned();
             $table->foreign('size_id')->references('id')->on('sizes');
             $table->foreign('color_id')->references('id')->on('colors');
-            $table->foreign('meterial_id')->references('id')->on('meterials');
             $table->foreign('product_id')->references('id')->on('products');
             $table->timestamps();
         });

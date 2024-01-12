@@ -15,18 +15,12 @@ class ColorController extends Controller
     public function index()
     {
         //
-        $colors = ColorResource::collection(Color::all());
+        $colors = ColorResource::collection(Color::orderBy('id', 'desc')->get());
 
         if ($colors->count() > 0) {
-            return response()->json([
-                'status' => 200,
-                'colors' => $colors
-            ], 200);
+            return response()->json($colors, 200);
         } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Không tìm thấy bản ghi'
-            ], 404);
+            return response()->json([], 200);
         }
     }
 
@@ -43,7 +37,21 @@ class ColorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $color = Color::where('name', $request->name)->count();
+
+            if ($color >= 1) {
+                return response()->json('Color đã tồn tại', 409);
+            } else {
+                Color::create([
+                    'name' => $request->name
+                ]);
+                return response()->json("Tạo color thành công", 201);
+            }
+        } catch (\Exception $e) {
+            return response()->json(["Tạo color thất bại: " . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -54,10 +62,7 @@ class ColorController extends Controller
         //
         $color = Color::find($id);
         if ($color) {
-            return response()->json([
-                'status' => 200,
-                'color' => $color
-            ], 200);
+            return response()->json($color, 200);
         } else {
             return response()->json([
                 'status' => 404,

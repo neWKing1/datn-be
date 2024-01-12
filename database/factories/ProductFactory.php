@@ -22,7 +22,6 @@ class ProductFactory extends Factory
             //
             'name' => $product_name,
             'slug' => $slug,
-            'quantity' => fake()->randomDigitNotNull(),
             'status' => fake()->boolean()
         ];
     }
