@@ -22,7 +22,9 @@ class ProductFactory extends Factory
             //
             'name' => $product_name,
             'slug' => $slug,
-            'status' => fake()->boolean()
+            'status' => fake()->boolean(),
+            'created_by' => fake()->name,
+            'updated_by' => fake()->name,
         ];
     }
 }

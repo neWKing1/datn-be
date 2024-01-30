@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Variant extends Model
 {
@@ -16,4 +18,16 @@ class Variant extends Model
         'color_id',
         'product_id'
     ];
+    public function size()
+    {
+        return $this->belongsTo(Size::class);
+    }
+    public function color()
+    {
+        return $this->belongsTo(Color::class);
+    }
+    public  function imageProducts() : hasMany
+    {
+        return $this->hasMany(ImageProduct::class);
+    }
 }

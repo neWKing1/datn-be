@@ -30,8 +30,16 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     Route::resource('/size', SizeController::class);
     Route::resource('/color', ColorController::class);
-    Route::resource('/product', ProductController::class);
+    Route::post('/add-variant', [VariantController::class, 'addVariants']);
     Route::resource('/variant', VariantController::class);
+
+    /* Product routes */
+    Route::get('/list-product-manage', [ProductController::class, 'listProductManage']);
+    Route::get('/product-detail-edit/{id}', [ProductController::class, 'productDetailEdit']);
+    Route::put('/product-detail-edit/update-fast', [ProductController::class, 'updateFast']);
+    Route::put('/product-detail-edit/{id}', [ProductController::class, 'updateProductDetail']);
+    Route::put('/product/change-status', [ProductController::class, 'changeStatus']);
+    Route::resource('/product', ProductController::class);
 
     /* Image Gallery routes */
     Route::group(['prefix' => 'image-gallery'], function () {
