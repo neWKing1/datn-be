@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Client;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Models\Variant;
 use Illuminate\Http\Request;
 
 class ProductClientController extends Controller
@@ -50,14 +51,27 @@ class ProductClientController extends Controller
 
     public function productFilter($options){
         $products = Product::query();
+        /*Lọc theo khoảng giá*/
+        if ($options->has('min') && $options->has('max') && $options->max > 0 && is_numeric($options->max)){
+            $products->whereHas('variants', function ($query) use ($options) {
+                $query->whereBetween('price', [$options->min, $options->max]);
+            });
+        }
 
+        /*phân trang*/
         if ($options->has('page') && $options->page >= 1) {
             $offset = ($options->page - 1) * $options->pageSize;
             $products->limit($options->pageSize)->offset($offset);
         } else {
             $products->limit(8);
         }
-
         return $products->get();
+    }
+
+    public function rangePrice(){
+        return \response()->json([
+            "min" => Variant::min('price'),
+            "max" => Variant::max('price')
+        ]);
     }
 }

@@ -45,6 +45,7 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     Route::get('product-list', [ProductClientController::class, 'index']);
     Route::get('product-detail/{slug}', [ProductClientController::class, 'detail']);
     Route::get('product-attributes/{slug}', [ProductClientController::class, 'attributes']);
+    Route::get('product-range-price', [ProductClientController::class, 'rangePrice']);
     /* Image Gallery routes */
     Route::group(['prefix' => 'image-gallery'], function () {
         Route::get('/{colorFolder}', [ImageGalleryController::class, 'getListPhotoByColor']);
