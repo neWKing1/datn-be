@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
@@ -240,5 +241,17 @@ class ProductController extends Controller
         }
 
         return response()->json('Cập nhật thành công', 200);
+    }
+    public function productDetail(Request $request)
+    {
+        $products = Product::with('variants.size')
+            ->with('variants.color')
+            ->with('variants.imageProducts.imageGallery')
+            ->whereIn('id', $request->shoes)
+            ->get();
+
+        $productResource = ProductResource::collection($products);
+
+        return response()->json($productResource, 200);
     }
 }
