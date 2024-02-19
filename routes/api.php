@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ColorController;
 use App\Http\Controllers\Api\ImageGalleryController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\PromotionController;
 use App\Http\Controllers\Api\SizeController;
 use App\Http\Controllers\Api\VariantController;
 use \App\Http\Controllers\Api\Client\ProductClientController;
@@ -35,6 +36,7 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
 
     /* Product routes */
     Route::get('/list-product-manage', [ProductController::class, 'listProductManage']);
+    Route::get('/product-detail', [ProductController::class, 'productDetail']);
     Route::get('/product-detail-edit/{id}', [ProductController::class, 'productDetailEdit']);
     Route::put('/product-detail-edit/update-fast', [ProductController::class, 'updateFast']);
     Route::put('/product-detail-edit/{id}', [ProductController::class, 'updateProductDetail']);
@@ -51,4 +53,7 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
         Route::get('/{colorFolder}', [ImageGalleryController::class, 'getListPhotoByColor']);
         Route::resource('/', ImageGalleryController::class);
     });
+
+    /* Promotion routes */
+    Route::resource('/promotion', PromotionController::class);
 });
