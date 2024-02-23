@@ -51,6 +51,7 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
 
     /*Cart*/
     Route::post('cart', [\App\Http\Controllers\Api\Client\CartController::class, 'index']);
+    Route::post('coupon', [\App\Http\Controllers\Api\Client\CartController::class, 'coupon']);
 
     /* Image Gallery routes */
     Route::group(['prefix' => 'image-gallery'], function () {
