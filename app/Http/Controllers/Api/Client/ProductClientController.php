@@ -52,7 +52,7 @@ class ProductClientController extends Controller
     public function productFilter($options){
         $products = Product::query();
         /*Lọc theo khoảng giá*/
-        if ($options->has('min') && $options->has('max') && $options->max > 0 && is_numeric($options->max)){
+        if ($options->has('min') && $options->has('max') && is_numeric($options->max) && $options->max > 0){
             $products->whereHas('variants', function ($query) use ($options) {
                 $query->whereBetween('price', [$options->min, $options->max]);
             });
@@ -65,6 +65,7 @@ class ProductClientController extends Controller
         } else {
             $products->limit(8);
         }
+
         return $products->get();
     }
 

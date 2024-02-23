@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Variant extends Model
@@ -46,5 +47,18 @@ class Variant extends Model
             'id',
             'image_gallery_id'
             );
+    }
+
+    public function product(): HasOne{
+        return $this->hasOne(Product::class, 'id', 'product_id');
+    }
+
+    public function promotions(): HasManyThrough{
+        return $this->hasManyThrough(Promotion::class,
+            PromotionVariant::class,
+        'variant_id',
+        'id',
+        'id',
+        'promotion_id');
     }
 }
