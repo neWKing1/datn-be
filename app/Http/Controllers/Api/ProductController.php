@@ -244,7 +244,8 @@ class ProductController extends Controller
     }
     public function productDetail(Request $request)
     {
-        $products = Product::with('variants.size')
+        $products = Product::with('variants')
+            ->with('variants.size')
             ->with('variants.color')
             ->with('variants.imageProducts.imageGallery')
             ->whereIn('id', $request->shoes)

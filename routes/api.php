@@ -60,5 +60,7 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     });
 
     /* Promotion routes */
+    Route::get('/promotion/list-shoe-id/{id}', [PromotionController::class, 'listShoeId']);
+    Route::get('/promotion/list-shoe-detail-id/{id}', [PromotionController::class, 'listShoeDetailId']);
     Route::resource('/promotion', PromotionController::class);
 });
