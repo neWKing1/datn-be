@@ -6,8 +6,10 @@ use App\Http\Controllers\Api\ImageGalleryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PromotionController;
 use App\Http\Controllers\Api\SizeController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VariantController;
 use \App\Http\Controllers\Api\Client\ProductClientController;
+use App\Http\Controllers\Api\VoucherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -63,4 +65,10 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     Route::get('/promotion/list-shoe-id/{id}', [PromotionController::class, 'listShoeId']);
     Route::get('/promotion/list-shoe-detail-id/{id}', [PromotionController::class, 'listShoeDetailId']);
     Route::resource('/promotion', PromotionController::class);
+
+    /* User routes */
+    Route::resource('/users', UserController::class);
+
+    /* Voucher routes */
+    Route::resource('/voucher', VoucherController::class);
 });
