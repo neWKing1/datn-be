@@ -26,9 +26,7 @@ class PromotionCommand extends Command
      */
     public function handle()
     {
-        info('Command executed at: ' . now());
         $date = date('Y-m-d H:i:s', strtotime(now()));
-        info($date);
 
         $promotions = Promotion::where('status', '!=', 'finished')->get();
 
