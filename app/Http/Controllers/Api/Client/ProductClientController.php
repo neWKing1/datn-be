@@ -27,6 +27,7 @@ class ProductClientController extends Controller
     public function detail($slug){
         $product = Product::where('slug', $slug)
             ->with('variants')
+            ->with('variants.promotions')
             ->first();
 
         $product->variants->map(function ($variant) {

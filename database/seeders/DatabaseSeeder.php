@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         $recordsCount = (int)$this->command->ask('How many records would you like?', 20);
 
         $users = \App\Models\User::factory($recordsCount)->create();
+        $this->call(OrderStatusSeeder::class);
 //        $colors = \App\Models\Color::factory($recordsCount)->create();
 //        $sizes = \App\Models\Size::factory($recordsCount)->create();
 //        $products = \App\Models\Product::factory($recordsCount)->create();

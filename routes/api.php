@@ -28,6 +28,16 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+/*Product client routes*/
+Route::get('product-list', [ProductClientController::class, 'index']);
+Route::get('product-detail/{slug}', [ProductClientController::class, 'detail']);
+Route::get('product-attributes/{slug}', [ProductClientController::class, 'attributes']);
+Route::get('product-range-price', [ProductClientController::class, 'rangePrice']);
+
+/*Cart*/
+Route::post('cart', [\App\Http\Controllers\Api\Client\CartController::class, 'index']);
+Route::post('coupon', [\App\Http\Controllers\Api\Client\CartController::class, 'coupon']);
+
 Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     Route::resource('/size', SizeController::class);
     Route::resource('/color', ColorController::class);
@@ -42,16 +52,6 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     Route::put('/product-detail-edit/{id}', [ProductController::class, 'updateProductDetail']);
     Route::put('/product/change-status', [ProductController::class, 'changeStatus']);
     Route::resource('/product', ProductController::class);
-
-    /*Product client routes*/
-    Route::get('product-list', [ProductClientController::class, 'index']);
-    Route::get('product-detail/{slug}', [ProductClientController::class, 'detail']);
-    Route::get('product-attributes/{slug}', [ProductClientController::class, 'attributes']);
-    Route::get('product-range-price', [ProductClientController::class, 'rangePrice']);
-
-    /*Cart*/
-    Route::post('cart', [\App\Http\Controllers\Api\Client\CartController::class, 'index']);
-    Route::post('coupon', [\App\Http\Controllers\Api\Client\CartController::class, 'coupon']);
 
     /* Image Gallery routes */
     Route::group(['prefix' => 'image-gallery'], function () {
