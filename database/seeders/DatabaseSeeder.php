@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
 
         $users = \App\Models\User::factory($recordsCount)->create();
         $this->call(OrderStatusSeeder::class);
+        $this->call(PaymentMethodSeeder::class);
 //        $colors = \App\Models\Color::factory($recordsCount)->create();
 //        $sizes = \App\Models\Size::factory($recordsCount)->create();
 //        $products = \App\Models\Product::factory($recordsCount)->create();

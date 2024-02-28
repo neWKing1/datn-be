@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
+
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-
+            $table->foreignId('payment_id')->constrained('payments', 'id');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('token')->nullable();
 
@@ -24,10 +26,14 @@ return new class extends Migration
             $table->string('recipient_district');
             $table->string('recipient_ward');
             $table->string('recipient_detail');
-            $table->string('note');
+            $table->string('recipient_note');
+            $table->string('shipping_by');
+            $table->integer('shipping_cost');
+            $table->enum('payment_status', ['Thanh toán khi nhận hàng', 'Chờ thanh toán', 'Đã thanh toán']);
 
             $table->timestamps();
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**

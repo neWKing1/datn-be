@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Variant;
 use Illuminate\Http\Request;
@@ -43,5 +44,13 @@ class CartController extends Controller
         }
     }
 
+    public function payments(){
+        try {
+            $payment_methods = Payment::query()->get();
+            return \response()->json($payment_methods);
+        } catch (\Exception $exception){
+            return $exception->getMessage();
+        }
 
+    }
 }

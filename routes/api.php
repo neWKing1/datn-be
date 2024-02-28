@@ -37,6 +37,7 @@ Route::get('product-range-price', [ProductClientController::class, 'rangePrice']
 /*Cart*/
 Route::post('cart', [\App\Http\Controllers\Api\Client\CartController::class, 'index']);
 Route::post('coupon', [\App\Http\Controllers\Api\Client\CartController::class, 'coupon']);
+Route::get('payment-method', [\App\Http\Controllers\Api\Client\CartController::class, 'payments']);
 
 Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     Route::resource('/size', SizeController::class);
