@@ -21,7 +21,6 @@ class CartController extends Controller
                     ->with('images')
                     ->with('color')
                     ->with('size')
-                    ->with('product')
                     ->with('product.colors')
                     ->with('product.sizes')
                     ->with('product.variants')
@@ -46,7 +45,7 @@ class CartController extends Controller
 
     public function payments(){
         try {
-            $payment_methods = Payment::query()->get();
+            $payment_methods = Payment::query()->whereIn('id', [1,2])->get();
             return \response()->json($payment_methods);
         } catch (\Exception $exception){
             return $exception->getMessage();

@@ -11,21 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_status_histories', function (Blueprint $table) {
+        Schema::create('order_promotions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained(); // Thêm cột order_id và áp dụng ràng buộc ngoại
-            $table->foreignId('order_status_id')->constrained('order_status', 'id');
-            $table->string('note')->nullable();
+            $table->foreignId('order_detail_id')->constrained('order_details', 'id');
+            $table->foreignId('promotion_id')->constrained('promotions', 'id');
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('order_status_histories');
+        Schema::dropIfExists('order_promotions');
     }
 };

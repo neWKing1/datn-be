@@ -25,19 +25,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
 });
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
-/*Product client routes*/
-Route::get('product-list', [ProductClientController::class, 'index']);
-Route::get('product-detail/{slug}', [ProductClientController::class, 'detail']);
-Route::get('product-attributes/{slug}', [ProductClientController::class, 'attributes']);
-Route::get('product-range-price', [ProductClientController::class, 'rangePrice']);
-
-/*Cart*/
-Route::post('cart', [\App\Http\Controllers\Api\Client\CartController::class, 'index']);
-Route::post('coupon', [\App\Http\Controllers\Api\Client\CartController::class, 'coupon']);
-Route::get('payment-method', [\App\Http\Controllers\Api\Client\CartController::class, 'payments']);
 
 Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     Route::resource('/size', SizeController::class);
@@ -54,6 +44,15 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     Route::put('/product/change-status', [ProductController::class, 'changeStatus']);
     Route::resource('/product', ProductController::class);
 
+    /*admin order*/
+    Route::prefix('admin')->group(function () {
+        Route::resource('order', \App\Http\Controllers\Api\OrderController::class);
+        Route::get('order-status', [\App\Http\Controllers\Api\OrderController::class, 'status']);
+        Route::get('order-customer', [\App\Http\Controllers\Api\OrderController::class, 'customer']);
+        Route::get('order-product', [\App\Http\Controllers\Api\OrderController::class, 'order_product']);
+        Route::get('payment-method', [\App\Http\Controllers\Api\OrderController::class, 'payments']);
+    });
+
     /* Image Gallery routes */
     Route::group(['prefix' => 'image-gallery'], function () {
         Route::get('/{colorFolder}', [ImageGalleryController::class, 'getListPhotoByColor']);
@@ -65,3 +64,26 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     Route::get('/promotion/list-shoe-detail-id/{id}', [PromotionController::class, 'listShoeDetailId']);
     Route::resource('/promotion', PromotionController::class);
 });
+
+/*Product client routes*/
+Route::get('product-list', [ProductClientController::class, 'index']);
+Route::get('product-detail/{slug}', [ProductClientController::class, 'detail']);
+Route::get('product-attributes/{slug}', [ProductClientController::class, 'attributes']);
+Route::get('product-range-price', [ProductClientController::class, 'rangePrice']);
+
+/*Cart*/
+Route::post('cart', [\App\Http\Controllers\Api\Client\CartController::class, 'index']);
+Route::post('coupon', [\App\Http\Controllers\Api\Client\CartController::class, 'coupon']);
+Route::get('payment-method', [\App\Http\Controllers\Api\Client\CartController::class, 'payments']);
+/*Order*/
+Route::get('order-status', [\App\Http\Controllers\Api\Client\OrderController::class, 'status']);
+Route::post('status-history' , [\App\Http\Controllers\Api\Client\OrderController::class, 'status_histories']);
+Route::post('update-status-history' , [\App\Http\Controllers\Api\Client\OrderController::class, 'updateStatusHistory']);
+Route::resource('order', \App\Http\Controllers\Api\Client\OrderController::class);
+
+/*Delivery*/
+Route::resource('delivery', \App\Http\Controllers\Api\Client\DeliveryController::class);
+
+/*Payment*/
+Route::post('order-payment', [\App\Http\Controllers\Api\PaymentController::class, 'orderPayment']);
+Route::post('check-payment', [\App\Http\Controllers\Api\PaymentController::class, 'checkPayment']);

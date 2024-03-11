@@ -21,6 +21,14 @@ class PaymentMethodSeeder extends Seeder
             [
                 'id' => '2',
                 'method' => 'Thanh toán qua VNPay'
+            ],
+            [
+                'id' => '3',
+                'method' => 'Thanh toán bằng tiền mặt'
+            ],
+            [
+                'id' => '4',
+                'method' => 'Thanh toán trực tuyến'
             ]
         ];
 

@@ -19,16 +19,16 @@ class OrderStatusSeeder extends Seeder
                 'status' => 'Chờ thanh toán'
             ],
             [
-                'id'=> 2,
-                'status' => 'Chờ xác nhận'
+              'id' => 2,
+              'status' => 'Đang xử lý'
             ],
             [
                 'id'=> 3,
-                'status' => 'Đã xác nhận'
+                'status' => 'Chờ xác nhận'
             ],
             [
                 'id'=> 4,
-                'status' => 'Chuẩn bị gửi hàng'
+                'status' => 'Đã xác nhận'
             ],
             [
                 'id'=> 5,
@@ -45,6 +45,18 @@ class OrderStatusSeeder extends Seeder
             [
                 'id'=> 8,
                 'status' => 'Trả hàng'
+            ],
+            [
+                'id'=> 9,
+                'status' => 'Đã hủy'
+            ],
+            [
+                'id' => 10,
+                'status' => 'Đặt hàng thất bại'
+            ],
+            [
+                'id' => 11,
+                'status' => 'Đặt hàng thành công'
             ],
         ];
 

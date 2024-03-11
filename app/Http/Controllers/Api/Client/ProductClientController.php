@@ -67,7 +67,7 @@ class ProductClientController extends Controller
             $products->limit(8);
         }
 
-        return $products->get();
+        return $products->where('is_active', '=', '1')->get();
     }
 
     public function rangePrice(){
