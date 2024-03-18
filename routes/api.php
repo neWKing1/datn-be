@@ -1,8 +1,12 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BillController;
+use App\Http\Controllers\Api\BillDetailController;
+use App\Http\Controllers\Api\BillHistoryController;
 use App\Http\Controllers\Api\ColorController;
 use App\Http\Controllers\Api\ImageGalleryController;
+use App\Http\Controllers\Api\PaymentHistoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PromotionController;
 use App\Http\Controllers\Api\SizeController;
@@ -70,5 +74,28 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     Route::resource('/users', UserController::class);
 
     /* Voucher routes */
+    Route::get('/get-voucher', [VoucherController::class, 'getVoucher']);
+    Route::get('/find-voucher', [VoucherController::class, 'getVoucher']);
     Route::resource('/voucher', VoucherController::class);
+
+    /* Bill routes */
+    Route::get('/get-bill', [BillController::class, 'getBillNotActive']);
+    Route::put('/bill/change-status/{id}', [BillController::class, 'changeStatus']);
+    Route::put('/bill/change-info/{id}', [BillController::class, 'changeInfo']);
+    Route::resource('/bill', BillController::class);
+
+    /* Bill Detail  routes */
+    Route::put('/bill-detail/change-quantity/{id}', [BillDetailController::class, 'updateQtyQuickly']);
+    Route::resource('/bill-detail', BillDetailController::class);
+
+    /* Bill History  routes */
+    Route::resource('/bill-history', BillHistoryController::class);
+
+    /* Payment History  routes */
+    Route::resource('/payment-history', PaymentHistoryController::class);
+
+    /* Customer  routes */
+    Route::get('/customer', [UserController::class, 'getCustomer']);
+    Route::post('/customer', [UserController::class, 'createCustomer']);
+    Route::get('/customer/{id}', [UserController::class, 'showCustomer']);
 });

@@ -29,4 +29,8 @@ class Voucher extends Model
     {
         return $this->belongsToMany(User::class, 'voucher_users', 'voucher_id', 'user_id');
     }
+    public function voucherUsers()
+    {
+        return $this->hasMany(VoucherUser::class);
+    }
 }

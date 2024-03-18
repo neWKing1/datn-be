@@ -125,6 +125,10 @@ class ProductController extends Controller
                     return $query->where('is_active', 0);
                 })
                 ->with('variants')
+                ->with('variants.size')
+                ->with('variants.color')
+                ->with('variants.imageProducts.imageGallery')
+                ->with('variants.promotions')
                 ->get()
         );
 

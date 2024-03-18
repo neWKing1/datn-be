@@ -49,16 +49,13 @@ class Variant extends Model
             );
     }
 
-    public function product(): HasOne{
-        return $this->hasOne(Product::class, 'id', 'product_id');
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
     }
 
-    public function promotions(): HasManyThrough{
-        return $this->hasManyThrough(Promotion::class,
-            PromotionVariant::class,
-        'variant_id',
-        'id',
-        'id',
-        'promotion_id');
+    public  function promotions()
+    {
+        return $this->belongsToMany(Promotion::class, 'promotion_variants', 'variant_id', 'promotion_id');
     }
 }
