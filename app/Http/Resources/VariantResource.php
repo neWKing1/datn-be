@@ -20,12 +20,15 @@ class VariantResource extends JsonResource
             "weight" => $this->weight,
             "price" => $this->price,
             "color_id" => $this->color_id,
+            "size_id" => $this->size_id,
             "product_id" => $this->product_id,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
             'imageProducts' => ImageProductResource::collection($this->whenLoaded('imageProducts')),
             'size' => new SizeResource($this->whenLoaded('size')),
             'color' => new ColorResource($this->whenLoaded('color')),
+            'product' => new ColorResource($this->whenLoaded('product')),
+            'promotion' => PromotionResource::collection ($this->whenLoaded('promotions')),
         ];
     }
 }

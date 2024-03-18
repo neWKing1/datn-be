@@ -26,8 +26,16 @@ class Variant extends Model
     {
         return $this->belongsTo(Color::class);
     }
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
     public  function imageProducts() : hasMany
     {
         return $this->hasMany(ImageProduct::class);
+    }
+    public  function promotions()
+    {
+        return $this->belongsToMany(Promotion::class, 'promotion_variants', 'variant_id', 'promotion_id');
     }
 }

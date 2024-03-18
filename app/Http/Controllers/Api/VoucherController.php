@@ -7,6 +7,7 @@ use App\Models\Promotion;
 use App\Models\Voucher;
 use App\Models\VoucherUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VoucherController extends Controller
 {
@@ -196,5 +197,35 @@ class VoucherController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function getVoucher(Request $request)
+    {
+        $voucherPublic = Voucher::where('status', 'happening')
+            ->where('type', 'public')
+            ->where('name', 'like', "%$request->name%")
+            ->get();
+
+        $vouchers = $voucherPublic;
+
+        if ($request->userId != '0') {
+            $voucherPrivate = Voucher::where('status', 'happening')
+                ->where('type', 'private')
+                ->where('name', 'like', "%$request->name%")
+                ->with('voucherUsers', function ($query) use ($request) {
+                    $query->where('user_id', $request->userId);
+                })
+                ->get();
+
+            $vouchers = $voucherPublic->merge($voucherPrivate);
+        }
+        return response()->json($vouchers, 200);
+    }
+    public function findVoucher(Request $request)
+    {
+        $voucher = Voucher::where('name', $request->name)
+            ->first();
+
+        return response()->json($voucher, 200);
     }
 }
