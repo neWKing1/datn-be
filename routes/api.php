@@ -49,16 +49,6 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     Route::put('/product/change-status', [ProductController::class, 'changeStatus']);
     Route::resource('/product', ProductController::class);
 
-    /*Product client routes*/
-    Route::get('product-list', [ProductClientController::class, 'index']);
-    Route::get('product-detail/{slug}', [ProductClientController::class, 'detail']);
-    Route::get('product-attributes/{slug}', [ProductClientController::class, 'attributes']);
-    Route::get('product-range-price', [ProductClientController::class, 'rangePrice']);
-
-    /*Cart*/
-    Route::post('cart', [\App\Http\Controllers\Api\Client\CartController::class, 'index']);
-    Route::post('coupon', [\App\Http\Controllers\Api\Client\CartController::class, 'coupon']);
-
     /* Image Gallery routes */
     Route::group(['prefix' => 'image-gallery'], function () {
         Route::get('/{colorFolder}', [ImageGalleryController::class, 'getListPhotoByColor']);
@@ -99,3 +89,25 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     Route::post('/customer', [UserController::class, 'createCustomer']);
     Route::get('/customer/{id}', [UserController::class, 'showCustomer']);
 });
+
+/*Product client routes*/
+Route::get('product-list', [ProductClientController::class, 'index']);
+Route::get('product-detail/{slug}', [ProductClientController::class, 'detail']);
+Route::get('product-attributes/{slug}', [ProductClientController::class, 'attributes']);
+Route::get('product-range-price', [ProductClientController::class, 'rangePrice']);
+
+/*Cart*/
+Route::post('cart', [\App\Http\Controllers\Api\Client\CartController::class, 'index']);
+Route::post('coupon', [\App\Http\Controllers\Api\Client\CartController::class, 'coupon']);
+Route::get('vouchers', [\App\Http\Controllers\Api\Client\VoucherController::class, 'index']);
+
+// payment
+Route::get('payment-method', [\App\Http\Controllers\Api\Client\PaymentController::class, 'payments']);
+Route::post('checking-payment', [\App\Http\Controllers\Api\Client\PaymentController::class, 'checkPayment']);
+
+/*Delivery*/
+Route::resource('delivery', \App\Http\Controllers\Api\Client\DeliveryController::class);
+
+// Order
+Route::get('order-status', [\App\Http\Controllers\Api\Client\OrderController::class, 'status']);
+Route::resource('/order', \App\Http\Controllers\Api\Client\OrderController::class);

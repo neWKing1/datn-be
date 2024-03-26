@@ -29,7 +29,8 @@ class DatabaseSeeder extends Seeder
 //            $variant->product_id = $products->random()->id;
 //            $variant->save();
 //        });
-
+        $this->call(PaymentDatabaseSeeder::class);
+        $this->call(BillStatusSeeder::class);
         $this->command->info('Successfully seeded.');
     }
 }

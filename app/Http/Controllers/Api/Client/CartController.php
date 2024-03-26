@@ -20,7 +20,6 @@ class CartController extends Controller
                     ->with('images')
                     ->with('color')
                     ->with('size')
-                    ->with('product')
                     ->with('product.colors')
                     ->with('product.sizes')
                     ->with('product.variants')

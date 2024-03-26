@@ -15,6 +15,9 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
          $schedule->command('app:promotion-command')->withoutOverlapping()->everyMinute()->timezone('Asia/Ho_Chi_Minh');
          $schedule->command('app:voucher-command')->withoutOverlapping()->everyMinute()->timezone('Asia/Ho_Chi_Minh');
+
+
+         $schedule->command('app:order-command')->withoutOverlapping()->everyFiveSeconds()->timezone('Asia/Ho_Chi_Minh');
     }
 
     /**

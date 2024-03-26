@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('created_by');
             $table->bigInteger('bill_id')->unsigned();
             $table->foreign('bill_id')->references('id')->on('bills')->onDelete('cascade');
+            $table->foreignId('status_id')->default('101')->constrained('bill_status', 'id');
             $table->timestamps();
         });
     }
