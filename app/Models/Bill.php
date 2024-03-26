@@ -23,7 +23,10 @@ class Bill extends Model
         'voucher_id',
         'customer_id',
         'phone_number',
-        'email'
+        'email',
+        'status_id',
+        'payment_id',
+        'address_information'
     ];
     public  function billDetails()
     {
@@ -32,5 +35,17 @@ class Bill extends Model
     public  function variants()
     {
         return $this->belongsToMany(Variant::class, 'bill_details', 'bill_id', 'variant_id');
+    }
+
+    public function payment(){
+        return $this->belongsTo(Payment::class, 'payment_id', 'id');
+    }
+
+    public function status(){
+        return $this->belongsTo(BillStatus::class, 'status_id', 'id');
+    }
+
+    public function status_histories(){
+        return $this->hasMany(BillHistory::class, 'bill_id', 'id');
     }
 }

@@ -21,16 +21,21 @@ return new class extends Migration
             $table->integer('total_money')->nullable();
             $table->string('money_reduce')->nullable();
             $table->string('address')->nullable();
+            $table->string('address_information')->nullable();
             $table->string('email')->nullable();
             $table->string('money_ship')->default(0);
             $table->enum('timeline', [0, 1, 2, 3, 4, 5, 6, 7])->default(0);
             $table->enum('type', ['delivery', 'at the counter'])->default('at the counter');
             $table->enum('payment_method', ['cash', 'card'])->default('cash');;
             $table->enum('status', ['active', 'no-active'])->default('no-active');
+            $table->boolean('is_process')->default(false);
+            $table->boolean('is_payment')->default(false);
             $table->bigInteger('voucher_id')->unsigned()->nullable();
             $table->bigInteger('customer_id')->unsigned()->nullable();
             $table->foreign('voucher_id')->references('id')->on('vouchers');
             $table->foreign('customer_id')->references('id')->on('users');
+            $table->foreignId('status_id')->default('102')->constrained('bill_status', 'id');
+            $table->foreignId('payment_id')->default('100')->constrained('payments', 'id');
             $table->timestamps();
         });
     }

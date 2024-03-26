@@ -11,7 +11,12 @@ class BillHistory extends Model
     protected $fillable = [
         'note',
         'bill_id',
+        'status_id',
         'created_by',
         'status'
     ];
+
+    public function status(){
+        return $this->belongsTo(BillStatus::class, 'status_id', 'id');
+    }
 }
