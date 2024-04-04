@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 
 class ProductClientController extends Controller
 {
+    protected $paginate = 1;
     public function index(Request $request){
         $products = $this->productFilter($request);
         // lấy biến thể
@@ -21,12 +22,16 @@ class ProductClientController extends Controller
             });
             return $product;
         });
-        return \response()->json($products);
+        return \response()->json([
+            'products' => $products,
+            'total' => $this->paginate
+        ], 200);
     }
 
     public function detail($slug){
         $product = Product::where('slug', $slug)
             ->with('variants')
+            ->with('variants.promotions')
             ->first();
 
         $product->variants->map(function ($variant) {
@@ -59,6 +64,7 @@ class ProductClientController extends Controller
         }
 
         /*phân trang*/
+        $this->paginate = $products->count();
         if ($options->has('page') && $options->page >= 1) {
             $offset = ($options->page - 1) * $options->pageSize;
             $products->limit($options->pageSize)->offset($offset);
