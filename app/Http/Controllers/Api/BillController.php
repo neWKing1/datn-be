@@ -77,6 +77,7 @@ class BillController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        dd($request->address);
         //
         $bill = Bill::find($id);
 

@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bill_histories', function (Blueprint $table) {
+        Schema::create('return_products', function (Blueprint $table) {
             $table->id();
-            $table->enum('status', [1, 2, 3, 4, 5, 6, 7, 8])->default(1);
-            $table->string('note');
-            $table->string('created_by');
+            $table->bigInteger('price');
+            $table->integer('quantity');
             $table->bigInteger('bill_id')->unsigned();
+            $table->bigInteger('variant_id')->unsigned();
             $table->foreign('bill_id')->references('id')->on('bills')->onDelete('cascade');
-            $table->foreignId('status_id')->default('101')->constrained('bill_status', 'id');
+            $table->foreign('variant_id')->references('id')->on('variants');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bill_histories');
+        Schema::dropIfExists('return_products');
     }
 };
