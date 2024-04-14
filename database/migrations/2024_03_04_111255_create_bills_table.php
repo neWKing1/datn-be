@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('address_information')->nullable();
             $table->string('email')->nullable();
             $table->string('money_ship')->default(0);
-            $table->enum('timeline', [0, 1, 2, 3, 4, 5, 6, 7])->default(0);
+            $table->enum('timeline', [0, 1, 2, 3, 4, 5, 6, 7, 8])->default(0);
             $table->enum('type', ['delivery', 'at the counter'])->default('at the counter');
             $table->enum('payment_method', ['cash', 'card'])->default('cash');;
             $table->enum('status', ['active', 'no-active'])->default('no-active');
