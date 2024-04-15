@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api\Client;
 
+use App\Http\Controllers\Api\PaymentHistoryController;
 use App\Http\Controllers\Controller;
 use App\Models\Bill;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\PaymentHistory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
@@ -99,6 +102,15 @@ class PaymentController extends Controller
                         $order->status_id = 101;
                         $order->is_payment = true;
                         $order->save();
+
+                        PaymentHistory::create([
+                            'bill_id' => $order->id,
+                            'note' => "Đã thanh toán qua VNPay",
+                            'created_by' => "Khách hàng",
+                            'total_money' => $order->total_money - $order->money_reduce + $order->money_ship,
+                            'trading_code' =>  $request->vnp_TransactionNo ?? null
+                        ]);
+
                         return \response()->json($order, 200);
                     } else {
                         return \response()->json([], 404);

@@ -55,7 +55,9 @@ class ProductClientController extends Controller
     }
 
     public function productFilter($options){
-        $products = Product::query();
+        $products = Product::query()
+            ->where('status', '!=', '0')
+            ->where('is_active', '!=', '0');
         /*Lọc theo khoảng giá*/
         if ($options->has('min') && $options->has('max') && is_numeric($options->max) && $options->max > 0){
             $products->whereHas('variants', function ($query) use ($options) {

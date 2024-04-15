@@ -88,6 +88,10 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     Route::get('/customer', [UserController::class, 'getCustomer']);
     Route::post('/customer', [UserController::class, 'createCustomer']);
     Route::get('/customer/{id}', [UserController::class, 'showCustomer']);
+
+    /*Thong ke*/
+    Route::post('/statistic', [\App\Http\Controllers\Api\StatisticController::class, 'index']);
+    Route::post('/dashboard-statistic', [\App\Http\Controllers\Api\StatisticController::class, 'orderToday']);
 });
 
 /*Product client routes*/
@@ -111,3 +115,5 @@ Route::resource('delivery', \App\Http\Controllers\Api\Client\DeliveryController:
 // Order
 Route::get('order-status', [\App\Http\Controllers\Api\Client\OrderController::class, 'status']);
 Route::resource('/order', \App\Http\Controllers\Api\Client\OrderController::class);
+Route::post('return_order/{id}', [\App\Http\Controllers\Api\Client\OrderController::class, 'return_order']);
+Route::post('order-payment', [\App\Http\Controllers\Api\Client\PaymentController::class, 'orderPayment']);

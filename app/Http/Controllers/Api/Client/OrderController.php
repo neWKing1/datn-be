@@ -33,8 +33,8 @@ class OrderController extends Controller
             $orders = $orders
                 ->whereHas('billDetails')
                 ->with('payment')
-                ->with('status.status_histories')
-                ->with('status.status_histories.status')
+                ->with('status_histories.status')
+                ->with('status')
                 ->with('billDetails.variant.images')
                 ->with('billDetails.variant.product')
                 ->orderBy('id', 'DESC')
@@ -96,6 +96,14 @@ class OrderController extends Controller
                 $order_payment['amount'] = $request->total_money;
                 $payment = (new PaymentController())->vnpay_payment($order_payment);
             }
+
+            BillHistory::create([
+                'note' => " ",
+                'status' => 1,
+                'bill_id' => $order->id,
+                'created_by' => "Khách hàng",
+                'status_id' => $payment ? 101 : 100
+            ]);
 
             return \response()->json([
                 'redirect' => $payment,
@@ -195,7 +203,20 @@ class OrderController extends Controller
         }
         return \response()->json(false, 404);
     }
-
+    public function return_order($id) {
+        $order = Bill::find($id);
+        if ($order) {
+            $order->update(['status_id' => '107']);
+            BillHistory::create([
+                'bill_id' => $order->id,
+                'status_id' => '108',
+                'note' => 'Chờ người bán xác nhận',
+                'created_by' => 'Khách hàng'
+            ]);
+            return \response()->json(true, 204);
+        }
+        return \response()->json(false, 404);
+    }
     public function status(){
         return \response()->json(BillStatus::all(), 200);
     }
