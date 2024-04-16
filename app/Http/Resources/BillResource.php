@@ -23,6 +23,7 @@ class BillResource extends JsonResource
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'variants' => VariantResource::collection($this->whenLoaded('variants')),
             'bill_details' => BillDetailResource::collection($this->whenLoaded('billDetails')),
+            'return_products' => ReturnProductResource::collection($this->returnProducts),
         ];
     }
 }

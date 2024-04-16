@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ImageGalleryController;
 use App\Http\Controllers\Api\PaymentHistoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PromotionController;
+use App\Http\Controllers\Api\ReturnProductController;
 use App\Http\Controllers\Api\SizeController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VariantController;
@@ -92,6 +93,9 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     /*Thong ke*/
     Route::post('/statistic', [\App\Http\Controllers\Api\StatisticController::class, 'index']);
     Route::post('/dashboard-statistic', [\App\Http\Controllers\Api\StatisticController::class, 'orderToday']);
+
+    /* Return Product routes */
+    Route::resource('return-product', ReturnProductController::class);
 });
 
 /*Product client routes*/
