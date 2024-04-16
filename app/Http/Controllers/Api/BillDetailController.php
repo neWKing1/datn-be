@@ -17,6 +17,7 @@ class BillDetailController extends Controller
     public function index(Request $request)
     {
         $bill = Bill::with('billDetails')
+            ->with('returnProducts')
             ->with('variants')
             ->with('variants.size')
             ->with('variants.color')

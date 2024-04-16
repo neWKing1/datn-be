@@ -15,12 +15,19 @@ class BillController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        $bills = Bill::where('status', 'active')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $status = $request->status;
+
+        $query = Bill::where('status', 'active')
+            ->orderBy('created_at', 'desc');
+
+        if ($status !== null && $status != 1) {
+            $query->where('timeline', $status);
+        }
+
+        $bills = $query->get();
+
         return response()->json($bills, 200);
     }
 
@@ -77,8 +84,6 @@ class BillController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        dd($request->address);
-        //
         $bill = Bill::find($id);
 
         if (!$bill) {

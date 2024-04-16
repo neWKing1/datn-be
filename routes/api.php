@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ImageGalleryController;
 use App\Http\Controllers\Api\PaymentHistoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PromotionController;
+use App\Http\Controllers\Api\ReturnProductController;
 use App\Http\Controllers\Api\SizeController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VariantController;
@@ -88,6 +89,9 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     Route::get('/customer', [UserController::class, 'getCustomer']);
     Route::post('/customer', [UserController::class, 'createCustomer']);
     Route::get('/customer/{id}', [UserController::class, 'showCustomer']);
+
+    /* Return Product routes */
+    Route::resource('return-product', ReturnProductController::class);
 });
 
 /*Product client routes*/

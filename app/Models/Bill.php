@@ -48,4 +48,9 @@ class Bill extends Model
     public function status_histories(){
         return $this->hasMany(BillHistory::class, 'bill_id', 'id');
     }
+
+    public function returnProducts()
+    {
+        return $this->hasMany(ReturnProduct::class);
+    }
 }
