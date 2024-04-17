@@ -93,6 +93,25 @@ class BillController extends Controller
             $user = User::find($request->customer);
             //có người dùng
             if ($request->type == 1) {
+                //thanh toán online (trường hợp giao hàng)
+                if ($request->paymentMethod == '1') {
+                    $bill->update([
+                        'customer_id' => empty($request->customer) ? null : $request->customer,
+                        'voucher_id' => empty($request->voucher) ? null : $request->voucher,
+                        'customer_name' => $request->customerName,
+                        'note' => empty($request->note) ? null : $request->note,
+                        'payment_method' =>  'card',
+                        'status' => 'no-active',
+                        'total_money' => $request->totalMoney,
+                        'money_reduce' => $request->moneyReduce,
+                        'timeline' => (string)$request->timeline,
+                        'type' => 'delivery',
+                        'phone_number' => $user->phone_number,
+                        'email' => $request->email
+                    ]);
+
+                    return $this->vnPay($request, $bill);
+                }
                 //thanh toán khi nhận hàng (trường hợp giao hàng)
                 $bill->update([
                     'customer_id' => empty($request->customer) ? null : $request->customer,
@@ -117,12 +136,25 @@ class BillController extends Controller
                     'created_by' => Auth::user()->name
                 ]);
 
-                //thanh toán online (trường hợp giao hàng)
-
             } else {
                 //thanh toán online (trường hợp không giao hàng)
                 if ($request->paymentMethod == '1') {
-                    return $this->vnPay($request);
+                    $bill->update([
+                        'customer_id' => empty($request->customer) ? null : $request->customer,
+                        'voucher_id' => empty($request->voucher) ? null : $request->voucher,
+                        'customer_name' => $request->customerName,
+                        'note' => empty($request->note) ? null : $request->note,
+                        'payment_method' =>  'card',
+                        'status' => 'no-active',
+                        'total_money' => $request->totalMoney,
+                        'money_reduce' => $request->moneyReduce,
+                        'timeline' => (string)$request->timeline,
+                        'type' => 'at the counter',
+                        'phone_number' => $user->phone_number,
+                        'email' => $request->email
+                    ]);
+
+                    return $this->vnPay($request, $bill);
                 }
 
                 //thánh toán khi nhận hàng (trường hợp không giao hàng)
@@ -159,17 +191,37 @@ class BillController extends Controller
                     'total_money' => $request->totalMoney,
                     'trading_code' =>  $request->trading_code
                 ]);
+
             }
 
             //không có người dùng - trường hợp này chỉ mua được hàng tại quầy
         } else {
-            //thánh toán tiền mặt
+            //thanh toán online
+            if ($request->paymentMethod == '1') {
+                $bill->update([
+                    'customer_id' => empty($request->customer) ? null : $request->customer,
+                    'voucher_id' => empty($request->voucher) ? null : $request->voucher,
+                    'customer_name' => $request->customerName,
+                    'note' => empty($request->note) ? null : $request->note,
+                    'payment_method' =>  'card',
+                    'status' => 'no-active',
+                    'total_money' => $request->totalMoney,
+                    'money_reduce' => $request->moneyReduce,
+                    'timeline' => (string)$request->timeline,
+                    'type' => 'at the counter',
+                    'email' => $request->email
+                ]);
+
+                return $this->vnPay($request, $bill);
+            }
+
+            //thanh toán tiền mặt
             $bill->update([
                 'customer_id' => empty($request->customer) ? null : $request->customer,
                 'voucher_id' => empty($request->voucher) ? null : $request->voucher,
                 'customer_name' => $request->customerName,
                 'note' => empty($request->note) ? null : $request->note,
-                'payment_method' => $request->paymentMethod == 0 ? 'cash' : 'card',
+                'payment_method' => 'cash',
                 'status' => 'active',
                 'total_money' => $request->totalMoney,
                 'money_reduce' => $request->moneyReduce,
@@ -197,8 +249,6 @@ class BillController extends Controller
                 'trading_code' => $request->trading_code
             ]);
         }
-
-        //thánh toán online
 
         return response()->json('Lưu đơn hàng thành công', 201);
     }
@@ -314,7 +364,7 @@ class BillController extends Controller
         return response()->json("Cập nhật thông tin thành công", 200);
     }
 
-    public function vnPay(Request $request)
+    public function vnPay(Request $request, Bill $bill)
     {
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
         $vnp_Returnurl = 'http://localhost:5173/admin/order';
@@ -322,9 +372,9 @@ class BillController extends Controller
         $vnp_HashSecret = "VJMBKWWRRCWMVNQHRLSLPDSRQSSNTOAV"; //Chuỗi bí mật
 
         $vnp_TxnRef = uniqid(); //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
-        $vnp_OrderInfo = '123';
+        $vnp_OrderInfo = $bill->id;
         $vnp_OrderType = '123';
-        $vnp_Amount = 100 * 100 * 24000;
+        $vnp_Amount = 100 * ($request->totalMoney + $request->moneyShip + - $request->moneyReduce);
         $vnp_Locale = "VN";
         $vnp_BankCode = $request['bank_code'];
         $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
@@ -375,5 +425,54 @@ class BillController extends Controller
             'code' => '00', 'message' => 'success', 'data' => $vnp_Url
         );
         return response()->json(['url' => $vnp_Url], 200);
+    }
+
+    public function updateStatusBillSuccessVnPay(string $id)
+    {
+        $bill = Bill::find($id);
+
+        $bill->update([
+            'status' => 'active',
+        ]);
+
+        if(!BillHistory::where('bill_id', $bill->id)->where('status', '3')->first()) {
+            BillHistory::create([
+                'note' => 'Đã thanh toán đủ tiền',
+                'status' => '3',
+                'bill_id' => $bill->id,
+                'created_by' => Auth::user()->name
+            ]);
+        }
+        if($bill->type != 'delivery') {
+            if(!BillHistory::where('bill_id', $bill->id)->where('status', '6')->first()) {
+                BillHistory::create([
+                    'note' => 'Hoàn thành',
+                    'status' => 6,
+                    'bill_id' => $bill->id,
+                    'created_by' => Auth::user()->name
+                ]);
+            }
+        } else {
+            if(!BillHistory::where('bill_id', $bill->id)->where('status', '4')->first()) {
+                BillHistory::create([
+                    'note' => 'Chờ giao',
+                    'status' => 4,
+                    'bill_id' => $bill->id,
+                    'created_by' => Auth::user()->name
+                ]);
+            }
+        }
+
+        if(!PaymentHistory::where('bill_id', $bill->id)->where('note', 'Đã thanh toán đủ tiền')->first()) {
+            PaymentHistory::create([
+                'bill_id' => $bill->id,
+                'note' => 'Đã thanh toán đủ tiền',
+                'created_by' => Auth::user()->name,
+                'total_money' => $bill->total_money,
+                'trading_code' => 'VNPay'
+            ]);
+        }
+
+        return response()->json('Lưu đơn hàng thành công', 201);
     }
 }

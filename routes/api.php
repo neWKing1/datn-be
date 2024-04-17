@@ -72,6 +72,7 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     /* Bill routes */
     Route::get('/get-bill', [BillController::class, 'getBillNotActive']);
     Route::put('/bill/change-status/{id}', [BillController::class, 'changeStatus']);
+    Route::put('/bill/update-status-bill-success-vnpay/{id}', [BillController::class, 'updateStatusBillSuccessVnPay']);
     Route::put('/bill/change-info/{id}', [BillController::class, 'changeInfo']);
     Route::resource('/bill', BillController::class);
 
