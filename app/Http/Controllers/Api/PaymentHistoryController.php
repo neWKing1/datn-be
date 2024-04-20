@@ -57,25 +57,30 @@ class PaymentHistoryController extends Controller
         } else {
             try {
                 // Here, we assume $request->total_money is sent in the request
-                PaymentHistory::create([
-                    'bill_id' => $request->bill_id,
-                    'note' => $request->note,
-                    'created_by' => Auth::user()->name,
-                    'total_money' => $request->total_money, // Corrected line
-                    'trading_code' => $request->trading_code
-                ]);
+                if(!PaymentHistory::where('bill_id', $request->bill_id)->where('method', 'pay')->first()){
+                    PaymentHistory::create([
+                        'bill_id' => $request->bill_id,
+                        'note' => $request->note,
+                        'created_by' => Auth::user()->name,
+                        'total_money' => $request->total_money, // Corrected line
+                        'trading_code' => $request->trading_code
+                    ]);
+                }
+
 
                 $bill = Bill::find($request->bill_id);
                 $bill->update([
                     'timeline' => '3'
                 ]);
 
-                BillHistory::create([
-                    'note' => 'Đã thanh toán đủ tiền',
-                    'status' => '3',
-                    'bill_id' => $bill->id,
-                    'created_by' => Auth::user()->name
-                ]);
+                if(!BillHistory::where('bill_id', $bill->id)->where('note', 'Đã thanh toán đủ tiền')->first()){
+                    BillHistory::create([
+                        'note' => 'Đã thanh toán đủ tiền',
+                        'status' => '3',
+                        'bill_id' => $bill->id,
+                        'created_by' => Auth::user()->name
+                    ]);
+                }
 
                 DB::commit();
 

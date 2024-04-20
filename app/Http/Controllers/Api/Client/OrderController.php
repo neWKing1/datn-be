@@ -71,6 +71,7 @@ class OrderController extends Controller
             $order_data['status_id'] = $request->payment['id'] == 100 ? 101 : 100;
             $order_data['status'] = 'active';
             $order_data['code'] = 'HD' . uniqid();
+            $order_data['timeline'] = '2';
             $order = Bill::create($order_data);
 //            return $order;
             // thêm sản phẩm cho đơn hàng
@@ -98,8 +99,16 @@ class OrderController extends Controller
             }
 
             BillHistory::create([
-                'note' => " ",
-                'status' => 1,
+                'note' => "Tạo đơn hàng",
+                'status' => '1',
+                'bill_id' => $order->id,
+                'created_by' => "Khách hàng",
+                'status_id' => $payment ? 101 : 100
+            ]);
+
+            BillHistory::create([
+                'note' => "Chờ xác nhận",
+                'status' => '2',
                 'bill_id' => $order->id,
                 'created_by' => "Khách hàng",
                 'status_id' => $payment ? 101 : 100
