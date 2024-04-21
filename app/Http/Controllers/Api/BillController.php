@@ -282,11 +282,13 @@ class BillController extends Controller
                     }
                 }
                 $bill->update([
-                    'timeline' => '5'
+                    'timeline' => '5',
+                    'status_id' => '104'
                 ]);
                 BillHistory::create([
                     'note' => $request->note,
                     'status' => '5',
+                    'status_id' => '104',
                     'bill_id' => $bill->id,
                     'created_by' => Auth::user()->name
                 ]);
@@ -298,11 +300,13 @@ class BillController extends Controller
                 foreach ($billHistories as $billHistory) {
                     if ($billHistory->status == '3') {
                         $bill->update([
-                            'timeline' => '6'
+                            'timeline' => '6',
+                            'status_id' => '105'
                         ]);
                         BillHistory::create([
                             'note' => $request->note,
                             'status' => '6',
+                            'status_id' => '105',
                             'bill_id' => $bill->id,
                             'created_by' => Auth::user()->name
                         ]);
@@ -323,11 +327,13 @@ class BillController extends Controller
                     }
                 }
                 $bill->update([
-                    'timeline' => '4'
+                    'timeline' => '4',
+                    'status_id' => '103'
                 ]);
                 BillHistory::create([
                     'note' => 'Chờ giao',
                     'status' => '4',
+                    'status_id' => '103',
                     'bill_id' => $bill->id,
                     'created_by' => Auth::user()->name
                 ]);
@@ -341,11 +347,13 @@ class BillController extends Controller
                     }
                 }
                 $bill->update([
-                    'timeline' => '7'
+                    'timeline' => '7',
+                    'status_id' => '108'
                 ]);
                 BillHistory::create([
                     'note' => $request->note,
                     'status' => '7',
+                    'status_id' => '108',
                     'bill_id' => $bill->id,
                     'created_by' => Auth::user()->name
                 ]);

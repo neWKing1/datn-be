@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Client;
 use App\Http\Controllers\Api\PaymentHistoryController;
 use App\Http\Controllers\Controller;
 use App\Models\Bill;
+use App\Models\BillHistory;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\PaymentHistory;
@@ -109,6 +110,13 @@ class PaymentController extends Controller
                             'created_by' => "Khách hàng",
                             'total_money' => $order->total_money - $order->money_reduce + $order->money_ship,
                             'trading_code' =>  $request->vnp_TransactionNo ?? null
+                        ]);
+
+                        BillHistory::create([
+                            'note' => "Đã thanh toán đủ tiền",
+                            'status' => '3',
+                            'bill_id' => $order->id,
+                            'created_by' => "Khách hàng"
                         ]);
 
                         return \response()->json($order, 200);

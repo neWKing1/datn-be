@@ -8,6 +8,9 @@ use App\Models\BillDetail;
 use App\Models\BillHistory;
 use App\Models\BillPromotion;
 use App\Models\BillStatus;
+use App\Models\Promotion;
+use App\Models\Variant;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -58,7 +61,6 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-
         try {
             $order_data = $request->only(
                 'customer_id', 'voucher_id',
@@ -94,7 +96,7 @@ class OrderController extends Controller
             if ($request->payment['id'] == 101) {
                 $order_payment['id'] = $order->code;
                 $order_payment['return_payment'] = $request->return_payment;
-                $order_payment['amount'] = $request->total_money;
+                $order_payment['amount'] = $order->total_money + $order->money_ship - $order->money_reduce;
                 $payment = (new PaymentController())->vnpay_payment($order_payment);
             }
 
@@ -103,16 +105,33 @@ class OrderController extends Controller
                 'status' => '1',
                 'bill_id' => $order->id,
                 'created_by' => "Khách hàng",
-                'status_id' => $payment ? 101 : 100
+                'status_id' => 101
             ]);
 
-            BillHistory::create([
-                'note' => "Chờ xác nhận",
-                'status' => '2',
-                'bill_id' => $order->id,
-                'created_by' => "Khách hàng",
-                'status_id' => $payment ? 101 : 100
-            ]);
+            $validate = $this->validateOrder($request);
+
+            if ($validate['isValid']) {
+                foreach ($request->order_details as $order_detail) {
+                    $variant = Variant::where('id', '=', $order_detail['variant_id'])->first();
+                    $variant->quantity = $variant->quantity - $order_detail['quantity'];
+                    $variant->save();
+                }
+                BillHistory::create([
+                    'note' => "Chờ xác nhận",
+                    'status' => '2',
+                    'bill_id' => $order->id,
+                    'created_by' => "Khách hàng",
+                    'status_id' => 102
+                ]);
+            } else {
+                BillHistory::create([
+                    'note' => $validate['message'],
+                    'status' => '7',
+                    'bill_id' => $order->id,
+                    'created_by' => "Hệ thống",
+                    'status_id' => 109
+                ]);
+            }
 
             return \response()->json([
                 'redirect' => $payment,
@@ -201,12 +220,22 @@ class OrderController extends Controller
     {
         $order = Bill::find($id);
         if ($order) {
-            $order->update(['status_id' => '108']);
+            $order->update([
+                'status_id' => '108',
+                'timeline' => '7'
+            ]);
+
+            // hoàn số lượng sản phẩm
+            $order_details = BillDetail::where('bill_id', $order->id)->get();
+            foreach ($order_details as $detail) {
+
+            }
             BillHistory::create([
                 'bill_id' => $order->id,
                 'status_id' => '108',
-                'note' => 'Hủy đơn hàng thành công',
-                'created_by' => 'Khách hàng'
+                'created_by' => 'Khách hàng',
+                'status' => '7',
+                'note' => 'Đã hủy',
             ]);
             return \response()->json(true, 204);
         }
@@ -228,5 +257,43 @@ class OrderController extends Controller
     }
     public function status(){
         return \response()->json(BillStatus::all(), 200);
+    }
+
+    public function validateOrder($request)
+    {
+        $result = [
+            'isValid' => true,
+            'message' => 'Đặt hàng thành công',
+        ];
+
+        foreach ($request->order_details as $order_detail) {
+            $variant = Variant::where('id', '=', $order_detail['variant_id'])->first();
+
+            // kiểm ra số lượng sản phẩm còn lại
+            if ($variant->quantity < $order_detail['quantity']) {
+                $result['isValid'] = false;
+                $result['message'] = 'Sản phẩm không đủ số lượng';
+            }
+            // kiểm tra đợt giảm giá
+            if ($order_detail['promotion_id']) {
+                $promotion = Promotion::where('id', '=', $order_detail['promotion_id'])->first();
+                if ($promotion->status != 'happenning') {
+                    $result['isValid'] = false;
+                    $promotion->status == 'finished' ?
+                        $result['message'] = 'Đợt giảm giá đã hết hạn' :
+                        $result['message'] = 'Đợt giảm giá chưa thể áp dụng';
+                }
+            }
+        }
+        // kiểm tra phiếu giảm giá
+        if ($request->voucher_id) {
+            $voucher = Voucher::where('id', '=', $request->voucher_id)->first();
+            if ($voucher->quantity < 1) {
+                $result['isValid'] = false;
+                $result['message'] = 'Voucher đã hết!';
+            }
+        }
+
+        return $result;
     }
 }
