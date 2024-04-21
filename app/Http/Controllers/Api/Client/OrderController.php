@@ -70,7 +70,7 @@ class OrderController extends Controller
 
             $order_data['type'] = 'delivery';
             $order_data['payment_id'] = $request->payment['id'];
-            $order_data['status_id'] = $request->payment['id'] == 100 ? 101 : 100;
+            $order_data['status_id'] = $request->payment['id'] == 100 ? 102 : 103;
             $order_data['status'] = 'active';
             $order_data['code'] = 'HD' . uniqid();
             $order_data['timeline'] = '2';
@@ -219,11 +219,13 @@ class OrderController extends Controller
     public function destroy(string $id)
     {
         $order = Bill::find($id);
+
         if ($order) {
             $order->update([
                 'status_id' => '108',
                 'timeline' => '7'
             ]);
+<<<<<<< HEAD
 
             // hoàn số lượng sản phẩm
             $order_details = BillDetail::where('bill_id', $order->id)->get();
@@ -236,6 +238,14 @@ class OrderController extends Controller
                 'created_by' => 'Khách hàng',
                 'status' => '7',
                 'note' => 'Đã hủy',
+=======
+            BillHistory::create([
+                'bill_id' => $order->id,
+                'status_id' => '108',
+                'status' => '7',
+                'note' => 'Đã hủy',
+                'created_by' => 'Khách hàng'
+>>>>>>> 4f0b30a05f66945dece46685b2411e4b3441482b
             ]);
             return \response()->json(true, 204);
         }
