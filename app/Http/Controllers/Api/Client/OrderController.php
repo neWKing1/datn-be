@@ -68,7 +68,7 @@ class OrderController extends Controller
 
             $order_data['type'] = 'delivery';
             $order_data['payment_id'] = $request->payment['id'];
-            $order_data['status_id'] = $request->payment['id'] == 100 ? 101 : 100;
+            $order_data['status_id'] = $request->payment['id'] == 100 ? 102 : 103;
             $order_data['status'] = 'active';
             $order_data['code'] = 'HD' . uniqid();
             $order_data['timeline'] = '2';
@@ -200,12 +200,17 @@ class OrderController extends Controller
     public function destroy(string $id)
     {
         $order = Bill::find($id);
+
         if ($order) {
-            $order->update(['status_id' => '108']);
+            $order->update([
+                'status_id' => '108',
+                'timeline' => '7'
+            ]);
             BillHistory::create([
                 'bill_id' => $order->id,
                 'status_id' => '108',
-                'note' => 'Hủy đơn hàng thành công',
+                'status' => '7',
+                'note' => 'Đã hủy',
                 'created_by' => 'Khách hàng'
             ]);
             return \response()->json(true, 204);
