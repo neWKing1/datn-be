@@ -104,6 +104,7 @@ class BillController extends Controller
                         'status' => 'no-active',
                         'total_money' => $request->totalMoney,
                         'money_reduce' => $request->moneyReduce,
+                        'money_ship' => $request->moneyShip,
                         'timeline' => (string)$request->timeline,
                         'type' => 'delivery',
                         'phone_number' => $user->phone_number,
