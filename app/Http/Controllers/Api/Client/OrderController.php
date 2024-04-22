@@ -70,7 +70,7 @@ class OrderController extends Controller
 
             $order_data['type'] = 'delivery';
             $order_data['payment_id'] = $request->payment['id'];
-            $order_data['status_id'] = $request->payment['id'] == 100 ? 102 : 103;
+            $order_data['status_id'] = $request->payment['id'] == 100 ? 102 : 100;
             $order_data['status'] = 'active';
             $order_data['code'] = 'HD' . uniqid();
             $order_data['timeline'] = '2';
@@ -116,13 +116,23 @@ class OrderController extends Controller
                     $variant->quantity = $variant->quantity - $order_detail['quantity'];
                     $variant->save();
                 }
-                BillHistory::create([
-                    'note' => "Chờ xác nhận",
-                    'status' => '2',
-                    'bill_id' => $order->id,
-                    'created_by' => "Khách hàng",
-                    'status_id' => 102
-                ]);
+                if (!$payment) {
+                    BillHistory::create([
+                        'note' => "Chờ xác nhận",
+                        'status' => '2',
+                        'bill_id' => $order->id,
+                        'created_by' => "Khách hàng",
+                        'status_id' => 102
+                    ]);
+                } else {
+                    BillHistory::create([
+                        'note' => "Chờ thanh toán",
+                        'status' => '2',
+                        'bill_id' => $order->id,
+                        'created_by' => "Khách hàng",
+                        'status_id' => 100
+                    ]);
+                }
             } else {
                 BillHistory::create([
                     'note' => $validate['message'],
@@ -210,6 +220,8 @@ class OrderController extends Controller
                             $variant = Variant::where('id', $order_detail->variant_id)->first();
                             $old_qty = $order_detail->quantity;
                             $new_qty = $od->quantity;
+                            $qty = $new_qty - $old_qty;
+
 
                         }
                     }
