@@ -204,7 +204,15 @@ class OrderController extends Controller
                     }
 
                     // trường hợp thay đổi số lượng sản phẩm
+                    if ($request->has('orderDetailChange')) {
+                        foreach ($request->orderDetailChange as $od) {
+                            $order_detail = BillDetail::where('id', $od->id)->first();
+                            $variant = Variant::where('id', $order_detail->variant_id)->first();
+                            $old_qty = $order_detail->quantity;
+                            $new_qty = $od->quantity;
 
+                        }
+                    }
                     return $order;
                 }
             }
