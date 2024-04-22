@@ -225,27 +225,21 @@ class OrderController extends Controller
                 'status_id' => '108',
                 'timeline' => '7'
             ]);
-<<<<<<< HEAD
 
             // hoàn số lượng sản phẩm
             $order_details = BillDetail::where('bill_id', $order->id)->get();
             foreach ($order_details as $detail) {
-
+                $variant = Variant::where('id', $detail->variant_id)->first();
+                $variant->quantity = $variant->quantity + $detail->quantity;
+                $variant->save();
             }
-            BillHistory::create([
-                'bill_id' => $order->id,
-                'status_id' => '108',
-                'created_by' => 'Khách hàng',
-                'status' => '7',
-                'note' => 'Đã hủy',
-=======
+
             BillHistory::create([
                 'bill_id' => $order->id,
                 'status_id' => '108',
                 'status' => '7',
                 'note' => 'Đã hủy',
                 'created_by' => 'Khách hàng'
->>>>>>> 4f0b30a05f66945dece46685b2411e4b3441482b
             ]);
             return \response()->json(true, 204);
         }
