@@ -100,7 +100,7 @@ class PaymentController extends Controller
                 if ($request->vnp_ResponseCode == "00" && $request->vnp_TmnCode == $this->vnp_TmnCode) {
                     $order = Bill::where('code', '=', $request->vnp_TxnRef)->first();
                     if ($order && $request->vnp_TransactionStatus == '00') {
-                        $order->status_id = 101;
+                        $order->status_id = 102;
                         $order->is_payment = 1;
                         $order->save();
 

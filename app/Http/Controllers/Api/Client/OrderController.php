@@ -105,7 +105,7 @@ class OrderController extends Controller
                 'status' => '1',
                 'bill_id' => $order->id,
                 'created_by' => "Khách hàng",
-                'status_id' => 101
+                'status_id' => $request->payment['id'] == 100 ? 102 : 100,
             ]);
 
             $validate = $this->validateOrder($request);
@@ -124,15 +124,16 @@ class OrderController extends Controller
                         'created_by' => "Khách hàng",
                         'status_id' => 102
                     ]);
-                } else {
-                    BillHistory::create([
-                        'note' => "Chờ thanh toán",
-                        'status' => '2',
-                        'bill_id' => $order->id,
-                        'created_by' => "Khách hàng",
-                        'status_id' => 100
-                    ]);
                 }
+//                else {
+//                    BillHistory::create([
+//                        'note' => "Chờ thanh toán",
+//                        'status' => '2',
+//                        'bill_id' => $order->id,
+//                        'created_by' => "Khách hàng",
+//                        'status_id' => 100
+//                    ]);
+//                }
             } else {
                 BillHistory::create([
                     'note' => $validate['message'],
