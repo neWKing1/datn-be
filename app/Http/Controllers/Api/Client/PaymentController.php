@@ -102,6 +102,7 @@ class PaymentController extends Controller
                     if ($order && $request->vnp_TransactionStatus == '00') {
                         $order->status_id = 102;
                         $order->is_payment = 1;
+                        $order->timeline = 4;
                         $order->save();
 
                         PaymentHistory::create([
@@ -112,9 +113,18 @@ class PaymentController extends Controller
                             'trading_code' =>  $request->vnp_TransactionNo ?? null
                         ]);
 
+                        BillHistory::where('bill_id', $order->id)->where('note', 'Chờ xác nhận')->first()->delete();
+
                         BillHistory::create([
                             'note' => "Đã thanh toán đủ tiền",
                             'status' => '3',
+                            'bill_id' => $order->id,
+                            'created_by' => "Khách hàng"
+                        ]);
+
+                        BillHistory::create([
+                            'note' => "Chờ giao",
+                            'status' => '4',
                             'bill_id' => $order->id,
                             'created_by' => "Khách hàng"
                         ]);

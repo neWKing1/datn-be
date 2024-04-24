@@ -116,7 +116,7 @@ class OrderController extends Controller
                     $variant->quantity = $variant->quantity - $order_detail['quantity'];
                     $variant->save();
                 }
-                if (!$payment) {
+//                if (!$payment) {
                     BillHistory::create([
                         'note' => "Chờ xác nhận",
                         'status' => '2',
@@ -124,7 +124,7 @@ class OrderController extends Controller
                         'created_by' => "Khách hàng",
                         'status_id' => 102
                     ]);
-                }
+//                }
 //                else {
 //                    BillHistory::create([
 //                        'note' => "Chờ thanh toán",
