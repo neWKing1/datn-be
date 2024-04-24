@@ -13,6 +13,7 @@ use App\Models\Variant;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use function Laravel\Prompts\error;
 
 class OrderController extends Controller
 {
@@ -209,21 +210,28 @@ class OrderController extends Controller
                 return \response()->json($order, 200);
             } else {
                 if ($order) {
-                    // trường hợp thông tin đơn hàng thay đổi
-                    if ($request->has('orderData')) {
-                        $order->update($request->orderData);
-                    }
-
                     // trường hợp thay đổi số lượng sản phẩm
                     if ($request->has('orderDetailChange')) {
                         foreach ($request->orderDetailChange as $od) {
-                            $order_detail = BillDetail::where('id', $od->id)->first();
+                            $order_detail = BillDetail::where('id', $od['id'])->first();
                             $variant = Variant::where('id', $order_detail->variant_id)->first();
                             $old_qty = $order_detail->quantity;
-                            $new_qty = $od->quantity;
+                            $new_qty = $od['quantity'];
                             $qty = $new_qty - $old_qty;
 
+                            if ($variant->quantity >= $new_qty - $order_detail->quantity) {
+                                $order_detail->quantity = $new_qty;
+                                $variant->quantity = $variant->quantity - $qty;
+                                $order_detail->save();
+                                $variant->save();
+                            } else {
+                                return response()->json([], 404);
+                            }
 
+                        }
+                        // trường hợp thông tin đơn hàng thay đổi
+                        if ($request->has('orderData')) {
+                            $order->update($request->orderData);
                         }
                     }
                     return $order;

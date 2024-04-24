@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
          $schedule->command('app:voucher-command')->withoutOverlapping()->everyMinute()->timezone('Asia/Ho_Chi_Minh');
 
 
-         $schedule->command('app:order-command')->withoutOverlapping()->everyFiveSeconds()->timezone('Asia/Ho_Chi_Minh');
+//         $schedule->command('app:order-command')->withoutOverlapping()->everyFiveSeconds()->timezone('Asia/Ho_Chi_Minh');
     }
 
     /**
