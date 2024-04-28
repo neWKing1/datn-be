@@ -115,17 +115,17 @@ class PaymentController extends Controller
                         BillHistory::create([
                             'note' => "Đã thanh toán đủ tiền",
                             'status' => '3',
+                            "status_id" => 102,
                             'bill_id' => $order->id,
                             'created_by' => "Khách hàng"
                         ]);
-
-                        return \response()->json($order, 200);
-                    } else {
-                        return \response()->json([], 404);
+                        return \response()->json(["message" => "Thanh toán thành công"], 200);
                     }
+                } else {
+                    return \response()->json(["message" => "Thanh toán thất bại"], 404);
                 }
             } catch (\Exception $e) {
-                return $e->getMessage();
+                return \response()->json(["message" => "Thanh toán thất bại"], 404);
             }
         }
 

@@ -101,17 +101,20 @@ class OrderController extends Controller
                 $payment = (new PaymentController())->vnpay_payment($order_payment);
             }
 
-            BillHistory::create([
-                'note' => "Tạo đơn hàng",
-                'status' => '1',
-                'bill_id' => $order->id,
-                'created_by' => "Khách hàng",
-                'status_id' => $request->payment['id'] == 100 ? 102 : 100,
-            ]);
+
 
             $validate = $this->validateOrder($request);
 
             if ($validate['isValid']) {
+
+                BillHistory::create([
+                    'note' => "Tạo đơn hàng",
+                    'status' => '1',
+                    'bill_id' => $order->id,
+                    'created_by' => "Khách hàng",
+                    'status_id' => $request->payment['id'] == 100 ? 102 : 100,
+                ]);
+
                 foreach ($request->order_details as $order_detail) {
                     $variant = Variant::where('id', '=', $order_detail['variant_id'])->first();
                     $variant->quantity = $variant->quantity - $order_detail['quantity'];
@@ -136,6 +139,8 @@ class OrderController extends Controller
 //                    ]);
 //                }
             } else {
+                $order->status_id = 109;
+                $order->save();
                 BillHistory::create([
                     'note' => $validate['message'],
                     'status' => '7',
@@ -143,6 +148,11 @@ class OrderController extends Controller
                     'created_by' => "Hệ thống",
                     'status_id' => 109
                 ]);
+                return \response()->json([
+                    'redirect' => $payment,
+                    'order' => $order,
+                    'message' => $validate['message'],
+                ], 404);
             }
 
             return \response()->json([
@@ -211,28 +221,28 @@ class OrderController extends Controller
             } else {
                 if ($order) {
                     // trường hợp thay đổi số lượng sản phẩm
-                    if ($request->has('orderDetailChange')) {
-                        foreach ($request->orderDetailChange as $od) {
-                            $order_detail = BillDetail::where('id', $od['id'])->first();
-                            $variant = Variant::where('id', $order_detail->variant_id)->first();
-                            $old_qty = $order_detail->quantity;
-                            $new_qty = $od['quantity'];
-                            $qty = $new_qty - $old_qty;
-
-                            if ($variant->quantity >= $new_qty - $order_detail->quantity) {
-                                $order_detail->quantity = $new_qty;
-                                $variant->quantity = $variant->quantity - $qty;
-                                $order_detail->save();
-                                $variant->save();
-                            } else {
-                                return response()->json([], 404);
-                            }
-
-                        }
-                        // trường hợp thông tin đơn hàng thay đổi
-                        if ($request->has('orderData')) {
-                            $order->update($request->orderData);
-                        }
+//                    if ($request->has('orderDetailChange')) {
+//                        foreach ($request->orderDetailChange as $od) {
+//                            $order_detail = BillDetail::where('id', $od['id'])->first();
+//                            $variant = Variant::where('id', $order_detail->variant_id)->first();
+//                            $old_qty = $order_detail->quantity;
+//                            $new_qty = $od['quantity'];
+//                            $qty = $new_qty - $old_qty;
+//
+//                            if ($variant->quantity >= $new_qty - $order_detail->quantity) {
+//                                $order_detail->quantity = $new_qty;
+//                                $variant->quantity = $variant->quantity - $qty;
+//                                $order_detail->save();
+//                                $variant->save();
+//                            } else {
+//                                return response()->json([], 404);
+//                            }
+//
+//                        }
+//                    }
+                    // trường hợp thông tin đơn hàng thay đổi
+                    if ($request->has('orderData')) {
+                        $order->update($request->orderData);
                     }
                     return $order;
                 }
