@@ -3,10 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\BillDetailResource;
+use App\Http\Resources\BillResource;
+use App\Http\Resources\ProductResource;
 use App\Models\Bill;
+use App\Models\BillDetail;
 use App\Models\BillHistory;
 use App\Models\PaymentHistory;
+use App\Models\Product;
 use App\Models\User;
+use App\Models\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -100,7 +106,7 @@ class BillController extends Controller
                         'voucher_id' => empty($request->voucher) ? null : $request->voucher,
                         'customer_name' => $request->customerName,
                         'note' => empty($request->note) ? null : $request->note,
-                        'payment_method' =>  'card',
+                        'payment_method' => 'card',
                         'status' => 'no-active',
                         'total_money' => $request->totalMoney,
                         'money_reduce' => $request->moneyReduce,
@@ -146,7 +152,7 @@ class BillController extends Controller
                         'voucher_id' => empty($request->voucher) ? null : $request->voucher,
                         'customer_name' => $request->customerName,
                         'note' => empty($request->note) ? null : $request->note,
-                        'payment_method' =>  'card',
+                        'payment_method' => 'card',
                         'status' => 'no-active',
                         'total_money' => $request->totalMoney,
                         'money_reduce' => $request->moneyReduce,
@@ -165,7 +171,7 @@ class BillController extends Controller
                     'voucher_id' => empty($request->voucher) ? null : $request->voucher,
                     'customer_name' => $request->customerName,
                     'note' => empty($request->note) ? null : $request->note,
-                    'payment_method' =>  'cash',
+                    'payment_method' => 'cash',
                     'status' => 'active',
                     'total_money' => $request->totalMoney,
                     'money_reduce' => $request->moneyReduce,
@@ -191,7 +197,7 @@ class BillController extends Controller
                     'note' => 'Đã thanh toán đủ tiền',
                     'created_by' => Auth::user()->name,
                     'total_money' => $request->totalMoney,
-                    'trading_code' =>  $request->trading_code
+                    'trading_code' => $request->trading_code
                 ]);
 
             }
@@ -205,7 +211,7 @@ class BillController extends Controller
                     'voucher_id' => empty($request->voucher) ? null : $request->voucher,
                     'customer_name' => $request->customerName,
                     'note' => empty($request->note) ? null : $request->note,
-                    'payment_method' =>  'card',
+                    'payment_method' => 'card',
                     'status' => 'no-active',
                     'total_money' => $request->totalMoney,
                     'money_reduce' => $request->moneyReduce,
@@ -384,7 +390,7 @@ class BillController extends Controller
         $vnp_TxnRef = uniqid(); //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
         $vnp_OrderInfo = $bill->id;
         $vnp_OrderType = '123';
-        $vnp_Amount = 100 * ($request->totalMoney + $request->moneyShip + - $request->moneyReduce);
+        $vnp_Amount = 100 * ($request->totalMoney + $request->moneyShip + -$request->moneyReduce);
         $vnp_Locale = "VN";
         $vnp_BankCode = $request['bank_code'];
         $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
@@ -445,7 +451,7 @@ class BillController extends Controller
             'status' => 'active',
         ]);
 
-        if(!BillHistory::where('bill_id', $bill->id)->where('status', '3')->first()) {
+        if (!BillHistory::where('bill_id', $bill->id)->where('status', '3')->first()) {
             BillHistory::create([
                 'note' => 'Đã thanh toán đủ tiền',
                 'status' => '3',
@@ -453,8 +459,8 @@ class BillController extends Controller
                 'created_by' => Auth::user()->name
             ]);
         }
-        if($bill->type != 'delivery') {
-            if(!BillHistory::where('bill_id', $bill->id)->where('status', '6')->first()) {
+        if ($bill->type != 'delivery') {
+            if (!BillHistory::where('bill_id', $bill->id)->where('status', '6')->first()) {
                 BillHistory::create([
                     'note' => 'Hoàn thành',
                     'status' => 6,
@@ -463,7 +469,7 @@ class BillController extends Controller
                 ]);
             }
         } else {
-            if(!BillHistory::where('bill_id', $bill->id)->where('status', '4')->first()) {
+            if (!BillHistory::where('bill_id', $bill->id)->where('status', '4')->first()) {
                 BillHistory::create([
                     'note' => 'Chờ giao',
                     'status' => 4,
@@ -473,7 +479,7 @@ class BillController extends Controller
             }
         }
 
-        if(!PaymentHistory::where('bill_id', $bill->id)->where('note', 'Đã thanh toán đủ tiền')->first()) {
+        if (!PaymentHistory::where('bill_id', $bill->id)->where('note', 'Đã thanh toán đủ tiền')->first()) {
             PaymentHistory::create([
                 'bill_id' => $bill->id,
                 'note' => 'Đã thanh toán đủ tiền',
@@ -484,5 +490,44 @@ class BillController extends Controller
         }
 
         return response()->json('Lưu đơn hàng thành công', 201);
+    }
+
+    public function getTopProductInOrder()
+    {
+        // Group the BillDetail records by variant_id and then calculate the sum of quantity for each group
+        $top3Sums = BillDetail::groupBy('variant_id')
+            ->selectRaw('variant_id, sum(quantity) as total_quantity')
+            ->orderByDesc('total_quantity') // Order by total_quantity in descending order
+            ->limit(3) // Limit the results to top 3
+            ->get();
+
+        // Get the variant IDs of the top 3 sums
+        $top3VariantIds = $top3Sums->pluck('variant_id')->toArray();
+
+        $variants = [];
+        foreach ($top3VariantIds as $id) {
+            // Find the variant by variant_id
+            $variant = Variant::with('size', 'product', 'color')->find($id);
+
+            // Add the total_quantity to the variant object
+            $variant->total_quantity = $top3Sums->where('variant_id', $id)->first()->total_quantity;
+
+            // Add the variant to the products array
+            $variants[] = $variant;
+        }
+
+        // Return the top 3 sums and the corresponding products
+        return response()->json($variants, 200);
+    }
+
+    public function getStatusBillToday()
+    {
+        $bills = Bill::whereDate('updated_at', today()) // Filter bills created today
+        ->where('timeline', '!=', '0')
+            ->selectRaw('timeline, COUNT(*) as total_quantity') // Count the number of bills for each timeline status
+            ->groupBy('timeline')
+            ->get();
+
+        return response()->json($bills, 200);
     }
 }

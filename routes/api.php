@@ -66,10 +66,12 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
 
     /* Voucher routes */
     Route::get('/get-voucher', [VoucherController::class, 'getVoucher']);
-    Route::get('/find-voucher', [VoucherController::class, 'getVoucher']);
+    Route::get('/find-voucher', [VoucherController::class, 'findVoucher']);
     Route::resource('/voucher', VoucherController::class);
 
     /* Bill routes */
+    Route::get('/get-top-bill', [BillController::class, 'getTopProductInOrder']);
+    Route::get('/get-status-bill-today', [BillController::class, 'getStatusBillToday']);
     Route::get('/get-bill', [BillController::class, 'getBillNotActive']);
     Route::put('/bill/change-status/{id}', [BillController::class, 'changeStatus']);
     Route::put('/bill/update-status-bill-success-vnpay/{id}', [BillController::class, 'updateStatusBillSuccessVnPay']);
