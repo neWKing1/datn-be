@@ -20,6 +20,9 @@ class ProductClientController extends Controller
             $product->variants->map(function ($variant) {
                 return $variant->images ?? [];
             });
+            $product->variants->map(function ($variant) {
+                return $variant->promotions ?? [];
+            });
             return $product;
         });
         return \response()->json([
