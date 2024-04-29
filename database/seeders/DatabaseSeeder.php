@@ -12,9 +12,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $recordsCount = (int)$this->command->ask('How many records would you like?', 20);
+//        $recordsCount = (int)$this->command->ask('How many records would you like?', 20);
 
-        $users = \App\Models\User::factory($recordsCount)->create();
+//        $users = \App\Models\User::factory($recordsCount)->create();
 //        $colors = \App\Models\Color::factory($recordsCount)->create();
 //        $sizes = \App\Models\Size::factory($recordsCount)->create();
 //        $products = \App\Models\Product::factory($recordsCount)->create();
@@ -31,6 +31,13 @@ class DatabaseSeeder extends Seeder
 //        });
         $this->call(PaymentDatabaseSeeder::class);
         $this->call(BillStatusSeeder::class);
+        $this->call(UserDatabaseSeeder::class);
+        $this->call(ColorDatabaseSeeder::class);
+        $this->call(SizeDatabaseSeeder::class);
+        $this->call(ProductDatabaseSeeder::class);
+        $this->call(VariantDatabaseSeeder::class);
+        $this->call(GalleryDatabaseSeeder::class);
+        $this->call(ImageProductDatabaseSeeder::class);
         $this->command->info('Successfully seeded.');
     }
 }
