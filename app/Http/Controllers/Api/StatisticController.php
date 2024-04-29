@@ -167,7 +167,7 @@ class StatisticController extends Controller
     }
 
     public function orderToday() {
-        $orders = Bill::query()->whereDate('created_at', Carbon::today());
+        $orders = Bill::query()->whereDate('created_at', Carbon::today())->whereNot('status_id', '=', [100, 108, 109, 106]);
         $sales = $orders->get()->reduce(function ($total, $order){
             return $total + $order->total_money;
         }, 0);

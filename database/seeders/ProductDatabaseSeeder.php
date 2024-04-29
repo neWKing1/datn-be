@@ -19,8 +19,8 @@ class ProductDatabaseSeeder extends Seeder
         $products = [
             [
                 'id' => 1,
-                'name' => 'Giày Đi Bộ Đường Dài Nam Columbia Facet™ 75 Outdry™',
-                'slug' => Str::slug('Giày Đi Bộ Đường Dài Nam Columbia Facet™ 75 Outdry™'),
+                'name' => 'Giày Nam Columbia Facet™ 75 Outdry™',
+                'slug' => Str::slug('Giày Nam Columbia Facet™ 75 Outdry™'),
                 'created_by' => $owner->name ?? 'Hệ thống',
                 'updated_by' => $owner->name ?? 'Hệ thống',
                 'status' => 0,
