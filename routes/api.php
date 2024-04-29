@@ -96,6 +96,7 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
     /*Thong ke*/
     Route::post('/statistic', [\App\Http\Controllers\Api\StatisticController::class, 'index']);
     Route::post('/dashboard-statistic', [\App\Http\Controllers\Api\StatisticController::class, 'orderToday']);
+    Route::post('/revenue', [\App\Http\Controllers\Api\StatisticController::class, 'revenue']);
 
     /* Return Product routes */
     Route::resource('return-product', ReturnProductController::class);
