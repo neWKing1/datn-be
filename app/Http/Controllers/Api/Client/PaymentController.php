@@ -102,7 +102,10 @@ class PaymentController extends Controller
                     if ($order && $request->vnp_TransactionStatus == '00') {
                         $order->status_id = 102;
                         $order->is_payment = 1;
+                        $order->timeline = 4;
                         $order->save();
+
+                        BillHistory::where('bill_id', $order->id)->where('note', 'Chờ xác nhận')->first()->delete();
 
                         PaymentHistory::create([
                             'bill_id' => $order->id,

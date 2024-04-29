@@ -121,13 +121,13 @@ class OrderController extends Controller
                     $variant->save();
                 }
 //                if (!$payment) {
-//                    BillHistory::create([
-//                        'note' => "Chờ xác nhận",
-//                        'status' => '2',
-//                        'bill_id' => $order->id,
-//                        'created_by' => "Khách hàng",
-//                        'status_id' => 102
-//                    ]);
+                    BillHistory::create([
+                        'note' => "Chờ xác nhận",
+                        'status' => '2',
+                        'bill_id' => $order->id,
+                        'created_by' => "Khách hàng",
+                        'status_id' => 102
+                    ]);
 //                }
 //                else {
 //                    BillHistory::create([
