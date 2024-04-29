@@ -41,14 +41,20 @@ class ReturnProductController extends Controller
         }
 
         // Create a new BillHistory record
-        BillHistory::create([
-            'note' => $request->note,
-            'status' => 8,
-            'bill_id' => $request->id,
-            'created_by' => $request->user()->name
-        ]);
+        if(!BillHistory::where('bill_id', $request->id)->where('status' ,8)->first()){
+            BillHistory::create([
+                'note' => $request->note,
+                'status' => 8,
+                'status_id' => '107',
+                'bill_id' => $request->id,
+                'created_by' => $request->user()->name
+            ]);
 
-        Bill::find($request->id)->update(['timeline' => '8']);
+            Bill::find($request->id)->update([
+                'timeline' => '8',
+                'status_id' => '107'
+            ]);
+        }
 
         return response()->json("Gửi yêu cầu hoàn hàng thành công", 200);
     }

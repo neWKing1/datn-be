@@ -111,7 +111,7 @@ class VoucherController extends Controller
         ]);
         $voucher = Voucher::find($id);
         if ($voucher->type == 'private' && $request->type == 'public') {
-            VoucherUser::where('voucher_id')->delete();
+            VoucherUser::where('voucher_id', $id)->delete();
 
             $voucher->name = $request->name;
             $voucher->code = $request->code;
@@ -142,7 +142,7 @@ class VoucherController extends Controller
 
             $voucher->save();
         } else if ($voucher->type == 'private' && $request->type == 'private') {
-            VoucherUser::where('voucher_id')->delete();
+            VoucherUser::where('voucher_id', $id)->delete();
 
             $voucher->name = $request->name;
             $voucher->code = $request->code;
@@ -203,7 +203,6 @@ class VoucherController extends Controller
     {
         $voucherPublic = Voucher::where('status', 'happening')
             ->where('type', 'public')
-            ->where('name', 'like', "%$request->name%")
             ->get();
 
         $vouchers = $voucherPublic;
@@ -211,11 +210,14 @@ class VoucherController extends Controller
         if ($request->userId != '0') {
             $voucherPrivate = Voucher::where('status', 'happening')
                 ->where('type', 'private')
-                ->where('name', 'like', "%$request->name%")
                 ->with('voucherUsers', function ($query) use ($request) {
                     $query->where('user_id', $request->userId);
                 })
                 ->get();
+
+            $voucherPrivate = $voucherPrivate->filter(function ($voucher) {
+                return $voucher->voucherUsers->isNotEmpty();
+            });
 
             $vouchers = $voucherPublic->merge($voucherPrivate);
         }
