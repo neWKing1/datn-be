@@ -66,7 +66,7 @@ Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
 
     /* Voucher routes */
     Route::get('/get-voucher', [VoucherController::class, 'getVoucher']);
-    Route::get('/find-voucher', [VoucherController::class, 'findVoucher']);
+    Route::get('/find-voucher', [VoucherController::class, 'getVoucher']);
     Route::resource('/voucher', VoucherController::class);
 
     /* Bill routes */
