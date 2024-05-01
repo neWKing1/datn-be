@@ -451,7 +451,7 @@ class BillController extends Controller
             'status' => 'active',
         ]);
 
-        if (!BillHistory::where('bill_id', $bill->id)->where('status', '3')->first()) {
+        if (!BillHistory::where('bill_id', $bill->id)->where('status', '3')->exists()) {
             BillHistory::create([
                 'note' => 'Đã thanh toán đủ tiền',
                 'status' => '3',
@@ -460,7 +460,7 @@ class BillController extends Controller
             ]);
         }
         if ($bill->type != 'delivery') {
-            if (!BillHistory::where('bill_id', $bill->id)->where('status', '6')->first()) {
+            if (!BillHistory::where('bill_id', $bill->id)->where('status', '6')->exists()) {
                 BillHistory::create([
                     'note' => 'Hoàn thành',
                     'status' => 6,
@@ -469,7 +469,7 @@ class BillController extends Controller
                 ]);
             }
         } else {
-            if (!BillHistory::where('bill_id', $bill->id)->where('status', '4')->first()) {
+            if (!BillHistory::where('bill_id', $bill->id)->where('status', '4')->exists()) {
                 BillHistory::create([
                     'note' => 'Chờ giao',
                     'status' => 4,
@@ -479,7 +479,7 @@ class BillController extends Controller
             }
         }
 
-        if (!PaymentHistory::where('bill_id', $bill->id)->where('note', 'Đã thanh toán đủ tiền')->first()) {
+        if (!PaymentHistory::where('bill_id', $bill->id)->where('note', 'Đã thanh toán đủ tiền')->exists()) {
             PaymentHistory::create([
                 'bill_id' => $bill->id,
                 'note' => 'Đã thanh toán đủ tiền',
