@@ -36,8 +36,8 @@ class DatabaseSeeder extends Seeder
         $this->call(SizeDatabaseSeeder::class);
         $this->call(ProductDatabaseSeeder::class);
         $this->call(VariantDatabaseSeeder::class);
-        $this->call(GalleryDatabaseSeeder::class);
-        $this->call(ImageProductDatabaseSeeder::class);
+//        $this->call(GalleryDatabaseSeeder::class);
+//        $this->call(ImageProductDatabaseSeeder::class);
         $this->command->info('Successfully seeded.');
     }
 }
