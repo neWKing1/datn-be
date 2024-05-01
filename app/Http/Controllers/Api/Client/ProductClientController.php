@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api\Client;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
+use App\Models\Color;
 use App\Models\Product;
+use App\Models\Size;
 use App\Models\Variant;
 use Illuminate\Http\Request;
 
@@ -12,6 +14,7 @@ class ProductClientController extends Controller
 {
     protected $paginate = 1;
     public function index(Request $request){
+//        return $request->all();
         $products = $this->productFilter($request);
         // lấy biến thể
         $products->map(function ($product) {
@@ -68,6 +71,18 @@ class ProductClientController extends Controller
             });
         }
 
+        /*Loc theo color*/
+        if ($options->has('colors') && is_array($options->colors) && count($options->colors) > 0) {
+            $products->whereHas('variants', function ($query) use ($options) {
+                $query->whereIn('color_id', $options->query('colors'));
+            });
+        }
+        /*Loc theo size*/
+        if ($options->has('sizes') && is_array($options->sizes) && count($options->sizes) > 0) {
+            $products->whereHas('variants', function ($query) use ($options) {
+                $query->whereIn('size_id', $options->query('sizes'));
+            });
+        }
         /*phân trang*/
         $this->paginate = $products->count();
         if ($options->has('page') && $options->page >= 1) {
@@ -85,5 +100,13 @@ class ProductClientController extends Controller
             "min" => Variant::min('price'),
             "max" => Variant::max('price')
         ]);
+    }
+
+    public function colors() {
+        return \response()->json(Color::all(),200);
+    }
+
+    public function sizes() {
+        return \response()->json(Size::all(), 200);
     }
 }

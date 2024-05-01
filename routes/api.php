@@ -125,3 +125,8 @@ Route::get('order-status', [\App\Http\Controllers\Api\Client\OrderController::cl
 Route::resource('/order', \App\Http\Controllers\Api\Client\OrderController::class);
 Route::post('return_order/{id}', [\App\Http\Controllers\Api\Client\OrderController::class, 'return_order']);
 Route::post('order-payment', [\App\Http\Controllers\Api\Client\PaymentController::class, 'orderPayment']);
+
+// wishlist
+Route::resource('/wishlist', \App\Http\Controllers\Api\Client\WishListController::class);
+Route::get('colors', [ProductClientController::class, 'colors']);
+Route::get('sizes', [ProductClientController::class, 'sizes']);
