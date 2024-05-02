@@ -143,6 +143,15 @@ class BillController extends Controller
                     'bill_id' => $bill->id,
                     'created_by' => Auth::user()->name
                 ]);
+                $listItem = BillDetail::where('bill_id', $bill->id)->get();
+
+                foreach ($listItem as $item){
+                    $variant = Variant::find($item->variant_id);
+
+                    $variant->update([
+                        'quantity' =>  $variant->quantity - $item->quantity
+                    ]);
+                }
 
             } else {
                 //thanh toán online (trường hợp không giao hàng)
@@ -200,6 +209,15 @@ class BillController extends Controller
                     'trading_code' => $request->trading_code
                 ]);
 
+                $listItem = BillDetail::where('bill_id', $bill->id)->get();
+
+                foreach ($listItem as $item){
+                    $variant = Variant::find($item->variant_id);
+
+                    $variant->update([
+                        'quantity' =>  $variant->quantity - $item->quantity
+                    ]);
+                }
             }
 
             //không có người dùng - trường hợp này chỉ mua được hàng tại quầy
@@ -256,6 +274,15 @@ class BillController extends Controller
                 'total_money' => $request->totalMoney,
                 'trading_code' => $request->trading_code
             ]);
+            $listItem = BillDetail::where('bill_id', $bill->id)->get();
+
+            foreach ($listItem as $item){
+                $variant = Variant::find($item->variant_id);
+
+                $variant->update([
+                    'quantity' =>  $variant->quantity - $item->quantity
+                ]);
+            }
         }
 
         return response()->json('Lưu đơn hàng thành công', 201);
@@ -440,6 +467,15 @@ class BillController extends Controller
         $returnData = array(
             'code' => '00', 'message' => 'success', 'data' => $vnp_Url
         );
+        $listItem = BillDetail::where('bill_id', $bill->id)->get();
+
+        foreach ($listItem as $item){
+            $variant = Variant::find($item->variant_id);
+
+            $variant->update([
+                'quantity' =>  $variant->quantity - $item->quantity
+            ]);
+        }
         return response()->json(['url' => $vnp_Url], 200);
     }
 
