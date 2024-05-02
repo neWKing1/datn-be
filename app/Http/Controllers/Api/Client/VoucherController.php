@@ -11,17 +11,24 @@ class VoucherController extends Controller
 {
     public function index(Request $request) {
         $user_id = $request->user['id'] ?? null;
-        $vouchers = Voucher::query()->where('status', '=', 'happening');
 
         if ($user_id) {
-            $user_vouchers = VoucherUser::where('user_id', $user_id)->pluck('voucher_id');
-            $vouchers->where(function ($query) use ($user_vouchers) {
-                $query->whereIn('id', $user_vouchers)
-                    ->orWhere('type', '=', 'public');
-            });
+            $user_vouchers = VoucherUser::where('user_id', $user_id)->pluck('voucher_id')->toArray();
+
+            $public_vouchers = Voucher::query()
+                ->where('status', '=', 'happening')
+                ->where('type', '=', 'public')
+                ->get();
+
+            $vouchers = $public_vouchers->merge(Voucher::whereIn('id', $user_vouchers)->get());
+            return response()->json($vouchers, 200);
         }
 
-        return response()->json($vouchers->get(), 200);
+        $vouchers = Voucher::query()
+            ->where('status', '=', 'happening')
+            ->where('type', '=', 'public')
+            ->get();
+        return response()->json($vouchers, 200);
     }
 
 }
